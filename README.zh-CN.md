@@ -1,5 +1,12 @@
 <div align="center">
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo.png" width="200" alt="Pit-stop logo">
+  </picture>
+</p>
+
 # Pit-Stop
 
 *开进来，修好，出去更快。你不用下车。*

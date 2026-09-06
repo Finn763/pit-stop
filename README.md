@@ -1,5 +1,12 @@
 <div align="center">
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo.png" width="200" alt="Pit-stop logo">
+  </picture>
+</p>
+
 # Pit-Stop
 
 *Drive in, get fixed, come out faster. You stay in the car.*
