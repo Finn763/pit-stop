@@ -16,6 +16,13 @@ fixes them in a review→fix loop, verifies with real tool output, and returns o
 with a report split into verified / unverified / remaining. Push and publish
 never happen without your explicit word.
 
+## How it runs
+
+![pit-stop run loop](docs/architecture.svg)
+
+Five phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
+Interactive version: open `docs/architecture.html` in a browser.
+
 ## Install (30 seconds)
 
 ```bash
