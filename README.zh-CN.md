@@ -1,14 +1,21 @@
+<div align="center">
+
 # Pit-Stop
 
 *开进来，修好，出去更快。你不用下车。*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3fb950?style=flat-square&labelColor=black)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Finn763/pit-stop?style=flat-square&logo=github&labelColor=black)](https://github.com/Finn763/pit-stop/stargazers)
 [![Skills](https://img.shields.io/badge/skills-1-8957e5?style=flat-square&labelColor=black)](#仓库结构)
 
 [English](README.md) | 中文
 
-评审 agent 停在"指出问题"。Pit-stop 是一个跨端 agent skill，把活干完：
-**一句话跑完整个改进闭环——读代码→找缺点→改→验证→汇报，中途不问你。**
+</div>
+
+> 评审 agent 停在"指出问题"。Pit-stop 把活干完。
+
+Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——读代码→找缺点→改→验证→汇报，
+中途不问你。**
 
 ```
 用 pit-stop 改进 <项目路径>
@@ -17,6 +24,8 @@
 你只说一句。agent 装载上下文，找缺点（每条带 `路径:行号` 证据），
 修→复查循环里改完，用真实工具输出验证，最后一次性给报告
 （分已验证/未验证/待定）。推送和发布永远要你亲口说才动手。
+
+---
 
 ## 为什么做 pit-stop
 
@@ -30,12 +39,16 @@
  （`delete/stdlib/native/yagni/shrink/security/obs`），Speculative 只报不修。
   没活就直说：`Lean already. Ship.`。
 
+---
+
 ## 运行环
 
 ![pit-stop 运行环](docs/architecture.zh-CN.svg)
 
 五阶段一遍过，中途零打扰——护栏在上，升级出口在下。
 [▶ 交互版](https://finn763.github.io/pit-stop/architecture.zh-CN.html)
+
+---
 
 ## 安装（30 秒）
 
@@ -58,12 +71,17 @@ npx skills add Finn763/pit-stop
 
 无需每仓配置——没东西可配。
 
+---
+
 ## 理念
 
 先证据后结论 · 复查的是改动不是承诺 · 推送要人话 ·
 便宜且诚实（每阶段报花费，单阶段超 $20 自己停手）。
 
-## 仓库结构
+---
+
+<details>
+<summary><strong>仓库结构</strong></summary>
 
 ```
 skills/pit-stop/SKILL.md          # skill 本体（<500 词核心）
@@ -75,6 +93,8 @@ commands/ .opencode/              # slash 命令入口
 examples/before-after.md          # 真实战果
 docs/SPEC.md                      # 完整 spec（v3）
 ```
+
+</details>
 
 MIT。站在 superpowers、mattpocock/skills、ponytail、Trail of Bits skills、
 BugHunter、code-review-graph 肩膀上，详见 `docs/SPEC.md`。

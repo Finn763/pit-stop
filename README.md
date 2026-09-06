@@ -1,15 +1,21 @@
+<div align="center">
+
 # Pit-Stop
 
 *Drive in, get fixed, come out faster. You stay in the car.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3fb950?style=flat-square&labelColor=black)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Finn763/pit-stop?style=flat-square&logo=github&labelColor=black)](https://github.com/Finn763/pit-stop/stargazers)
 [![Skills](https://img.shields.io/badge/skills-1-8957e5?style=flat-square&labelColor=black)](#repo-layout)
 
 [中文](README.zh-CN.md) | English
 
-Review agents stop at findings. Pit-stop is a cross-runtime agent skill that finishes
-the job: **one instruction runs a full improvement loop — read → find → fix →
-verify → report — with no mid-run questions.**
+</div>
+
+> Review agents stop at findings. Pit-stop finishes the job.
+
+Pit-stop is a cross-runtime agent skill: **one instruction runs a full improvement
+loop — read → find → fix → verify → report — with no mid-run questions.**
 
 ```
 Use pit-stop on <project path>
@@ -19,6 +25,8 @@ You say one line. The agent loads context, finds weaknesses (every one with
 `path:line` evidence), fixes them in a review→fix loop, verifies with real tool
 output, and returns once with a report split into verified / unverified /
 remaining. Push and publish never happen without your explicit word.
+
+---
 
 ## Why pit-stop exists
 
@@ -34,12 +42,16 @@ Built to fix three failure modes every agent owner has met:
   **Fix:** every finding is tagged (`delete/stdlib/native/yagni/shrink/security/obs`),
   Speculative items are reported, never built. Nothing found: `Lean already. Ship.`
 
+---
+
 ## How it runs
 
 ![pit-stop run loop](docs/architecture.svg)
 
 Five phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
 [▶ Interactive version](https://finn763.github.io/pit-stop/architecture.html)
+
+---
 
 ## Install (30 seconds)
 
@@ -62,12 +74,17 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 
 No per-repo setup — there is nothing to configure.
 
+---
+
 ## Philosophy
 
 Evidence before claims · Review the fix, not the promise · Push waits for a human word ·
 Cheap to run, honest about cost (phases report spend; one phase past $20 stops itself).
 
-## Repo layout
+---
+
+<details>
+<summary><strong>Repo layout</strong></summary>
 
 ```
 skills/pit-stop/SKILL.md          # the skill (<500-word core)
@@ -79,6 +96,8 @@ commands/ .opencode/              # slash-command entries
 examples/before-after.md          # real run, real diff
 docs/SPEC.md                      # full specification (v3)
 ```
+
+</details>
 
 MIT. Built by studying superpowers, mattpocock/skills, ponytail, Trail of Bits
 skills, BugHunter, and code-review-graph — standing on their shoulders, see `docs/SPEC.md`.
