@@ -24,6 +24,19 @@ agent 先装载上下文，找缺点（每条带 `路径:行号` 证据），修
 ## 安装（30 秒）
 
 ```bash
+npx skills add Finn763/pit-stop
+```
+
+按提示选 agent，以后 `npx skills update` 更新。或装成 Claude Code 插件：
+
+```
+/plugin marketplace add Finn763/pit-stop
+/plugin install pit-stop@pit-stop
+```
+
+无需每仓配置——没东西可配。手动兜底：
+
+```bash
 cp -r skills/pit-stop ~/.agents/skills/   # Claude Code、Codex、Hermes、OpenCode、Pi 通用
 ```
 

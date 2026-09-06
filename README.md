@@ -26,6 +26,20 @@ Five phases, one pass, zero mid-run questions — guardrails on top, escalation 
 ## Install (30 seconds)
 
 ```bash
+npx skills add Finn763/pit-stop
+```
+
+Pick your agent when asked; update later with `npx skills update`. Or install as
+a Claude Code plugin:
+
+```
+/plugin marketplace add Finn763/pit-stop
+/plugin install pit-stop@pit-stop
+```
+
+No per-repo setup — there is nothing to configure. Manual fallback:
+
+```bash
 cp -r skills/pit-stop ~/.agents/skills/   # Claude Code, Codex, Hermes, OpenCode, Pi
 ```
 
