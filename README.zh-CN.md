@@ -19,7 +19,7 @@ agent 先装载上下文，找缺点（每条带 `路径:行号` 证据），修
 ![pit-stop 运行环](docs/architecture.svg)
 
 五阶段一遍过，中途零打扰——护栏在上，升级出口在下。
-[▶ 交互版](https://finn763.github.io/pit-stop/architecture.html)（平移 / 缩放 / 主题切换 / 聚焦追踪）。
+[▶ 交互版](https://finn763.github.io/pit-stop/architecture.html)。
 
 ## 安装（30 秒）
 
