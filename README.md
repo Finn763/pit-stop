@@ -13,7 +13,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3fb950?style=flat-square&labelColor=black)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Finn763/pit-stop?style=flat-square&logo=github&labelColor=black)](https://github.com/Finn763/pit-stop/stargazers)
-[![Skills](https://img.shields.io/badge/skills-1-8957e5?style=flat-square&labelColor=black)](#repo-layout)
+[![Skills](https://img.shields.io/badge/skills-1-8957e5?style=flat-square&labelColor=black)]
 
 [中文](README.zh-CN.md) | English
 
@@ -72,10 +72,10 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 |---|---|
 | Claude Code | `/plugin marketplace add Finn763/pit-stop`, then `/plugin install pit-stop@pit-stop` |
 | Codex | plugin from `.codex-plugin` (see repo), or `npx skills` above |
-| Cursor | plugin from `.cursor-plugin`, or `/add-plugin pit-stop` |
+| Cursor | rule from `.cursor/rules/` (auto-loaded); `.cursor-plugin/` for Cursor Plugins |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
 | Pi | pi-package via `package.json`, or copy `skills/` |
-| OpenCode | command + skill auto-discovered from `.opencode/` |
+| OpenCode | command from `.opencode/command/`, or copy `skills/` |
 | Hermes | plugin from `.hermes-plugin`, or copy `skills/` |
 | Anything else | `cp -r skills/pit-stop ~/.agents/skills/` |
 
@@ -99,7 +99,9 @@ skills/pit-stop/references/       # phases, guardrails, verification
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
 commands/ .opencode/              # slash-command entries
-.claude-plugin/ .codex-plugin/ .hermes-plugin/ .cursor/ .windsurf/
+.claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
+.kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # per-harness adapters
+gemini-extension.json  GEMINI.md  package.json
 examples/before-after.md          # real run, real diff
 docs/SPEC.md                      # full specification (v3)
 ```

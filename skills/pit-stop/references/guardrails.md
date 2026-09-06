@@ -15,7 +15,10 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 ## L2 — Hooks (Claude-family hosts; skip gracefully elsewhere)
 
 Ship `hooks/block-destructive.sh` as PreToolUse on Bash: blocks `git push`,
-`reset --hard`, `clean -f[d]`, `branch -D`, `checkout .`, `restore .`, any `--force`.
+`reset --hard`, `clean -f[d]`, `branch -D`, `checkout .`, `restore .`, `git rm`,
+`find . -delete`, and `rm` in command position (after `&&`/`;`/`|`/`sudo`/`do`).
+No jq/grep dependency (pure bash + sed); if the command cannot be extracted,
+fail closed (exit 2) — a guardrail that silently passes is no guardrail.
 Blocked tool sees: "The user has prevented you from doing this." Exit 2.
 
 ## L3 — Pre-push sweep (machine)

@@ -1,4 +1,4 @@
-# pit-stop — SPEC v2（2026-09-04，参考 obra/superpowers、mattpocock/skills、DietrichGebert/ponytail、tides-review 后升级）
+# pit-stop — SPEC v3（2026-09-06，参考 obra/superpowers、mattpocock/skills、DietrichGebert/ponytail、tides-review 后升级）
 
 一句话：跨端通用 Skill，一句指令让 agent 全自动跑完「读代码→找缺点→改代码→跑测试→汇报」，
 中途不问人，刹车只写报告。名字：pit-stop（F1 进站：开进来修好，出去更快，不用下车）。
@@ -42,8 +42,8 @@
 
 - **L1 文档约束（跨端）**：禁止清单——删文件、`push --force`、读/写密钥凭据、改 CI 发布链与密钥、
   写生产数据库、对外发布（npm/PyPI/Release）。提交/推送默认不动手，等"推"字令。
-- **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive.sh`（PreToolUse 拦 push/reset --hard/clean/-D，
-  照抄 mp git-guardrails 形态），宿主支持就装，不支持就跳过，不强依赖。
+- **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive.sh`（PreToolUse 拦 push/reset --hard/clean/-D/rm/`find -delete`，
+  纯 bash+sed 无 jq/grep 依赖，解析不了 fail-closed，照抄 mp git-guardrails 形态），宿主支持就装，不支持就跳过，不强依赖。
 - **L3 终扫脚本**：推送/收尾前敏感词终扫（内联命令，0 命中才过）。
 - **Step 0 scope truth（学 tides-review）**：动手前先审"承诺"——用户要的和实际 build 的对上没有；
   对着没 build 的东西报"无 bug"是最危险的报告。
@@ -75,17 +75,19 @@
 
 ## 7. 仓库布局与发布（照三家抄作业）
 
-```
+```text
 pit-stop/
   skills/pit-stop/SKILL.md   # 本体（~/.agents/skills/pit-stop）
   skills/pit-stop/references/{phases,guardrails,verification}.md
   skills/pit-stop/templates/report.md
   hooks/block-destructive.sh # L2（Claude 系）
-  commands/pit-stop.toml     # slash 入口（学 ponytail commands/，v1 先占位）
+  commands/pit-stop.toml  .opencode/command/    # slash 入口
   examples/before-after.md   # 真实战果 before/after（学 ponytail examples/，传播弹药）
-  AGENTS.md  README.md  LICENSE(MIT)
-  .claude-plugin/  .codex-plugin/  .opencode/  .hermes-plugin/   # 多端适配（照三家）
-  docs/SPEC.md               # 本文件
+  AGENTS.md  GEMINI.md  gemini-extension.json  package.json  CHANGELOG.md  LICENSE(MIT)
+  README.md  README.zh-CN.md
+  .claude-plugin/  .codex-plugin/  .cursor-plugin/  .devin-plugin/  .kimi-plugin/
+  .hermes-plugin/  .cursor/  .windsurf/  .pi/extensions/    # 多端适配（照三家）
+  assets/  docs/SPEC.md  docs/architecture.{html,svg}+zh-CN  docs/release-notes/
 ```
 
 - 安装 v1：一行拷贝进 `~/.agents/skills/`（学 mp 双轨：以后再做订阅式更新，先拷文件）。

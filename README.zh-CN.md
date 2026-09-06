@@ -13,7 +13,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3fb950?style=flat-square&labelColor=black)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Finn763/pit-stop?style=flat-square&logo=github&labelColor=black)](https://github.com/Finn763/pit-stop/stargazers)
-[![Skills](https://img.shields.io/badge/skills-1-8957e5?style=flat-square&labelColor=black)](#仓库结构)
+[![Skills](https://img.shields.io/badge/skills-1-8957e5?style=flat-square&labelColor=black)]
 
 [English](README.md) | 中文
 
@@ -69,10 +69,10 @@ npx skills add Finn763/pit-stop
 |---|---|
 | Claude Code | `/plugin marketplace add Finn763/pit-stop`，再 `/plugin install pit-stop@pit-stop` |
 | Codex | `.codex-plugin` 插件，或上面 `npx skills` |
-| Cursor | `.cursor-plugin` 插件，或 `/add-plugin pit-stop` |
+| Cursor | `.cursor/rules/` 规则（自动加载）；`.cursor-plugin/` 为 Cursor Plugins 格式清单 |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
 | Pi | `package.json` 即 pi-package，或拷 `skills/` |
-| OpenCode | `.opencode/` 自动发现 |
+| OpenCode | `.opencode/command/` 命令入口，或拷 `skills/` |
 | Hermes | `.hermes-plugin` 插件，或拷 `skills/` |
 | 其他 | `cp -r skills/pit-stop ~/.agents/skills/` |
 
@@ -96,7 +96,9 @@ skills/pit-stop/references/       # 阶段、护栏、验证三份细节
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
 commands/ .opencode/              # slash 命令入口
-.claude-plugin/ .codex-plugin/ .hermes-plugin/ .cursor/ .windsurf/
+.claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
+.kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # 各端适配
+gemini-extension.json  GEMINI.md  package.json
 examples/before-after.md          # 真实战果
 docs/SPEC.md                      # 完整 spec（v3）
 ```
