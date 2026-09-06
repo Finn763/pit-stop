@@ -16,10 +16,10 @@ agent 先装载上下文，找缺点（每条带 `路径:行号` 证据），修
 
 ## 运行环
 
-![pit-stop 运行环](docs/architecture.svg)
+![pit-stop 运行环](docs/architecture.zh-CN.svg)
 
 五阶段一遍过，中途零打扰——护栏在上，升级出口在下。
-[▶ 交互版](https://finn763.github.io/pit-stop/architecture.html)
+[▶ 交互版](https://finn763.github.io/pit-stop/architecture.zh-CN.html)
 
 ## 安装（30 秒）
 
