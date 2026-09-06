@@ -29,19 +29,20 @@ Five phases, one pass, zero mid-run questions — guardrails on top, escalation 
 npx skills add Finn763/pit-stop
 ```
 
-Pick your agent when asked; update later with `npx skills update`. Or install as
-a Claude Code plugin:
+Pick your agent when asked; update later with `npx skills update`. Per harness:
 
-```
-/plugin marketplace add Finn763/pit-stop
-/plugin install pit-stop@pit-stop
-```
+| Harness | Install |
+|---|---|
+| Claude Code | `/plugin marketplace add Finn763/pit-stop`, then `/plugin install pit-stop@pit-stop` |
+| Codex | plugin from `.codex-plugin` (see repo), or `npx skills` above |
+| Cursor | plugin from `.cursor-plugin`, or `/add-plugin pit-stop` |
+| Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
+| Pi | pi-package via `package.json`, or copy `skills/` |
+| OpenCode | command + skill auto-discovered from `.opencode/` |
+| Hermes | plugin from `.hermes-plugin`, or copy `skills/` |
+| Anything else | `cp -r skills/pit-stop ~/.agents/skills/` |
 
-No per-repo setup — there is nothing to configure. Manual fallback:
-
-```bash
-cp -r skills/pit-stop ~/.agents/skills/   # Claude Code, Codex, Hermes, OpenCode, Pi
-```
+No per-repo setup — there is nothing to configure.
 
 Claude Code plugin, Codex plugin, OpenCode command, Cursor/Windsurf rules,
 and a destructive-command hook are bundled — see the repo layout. Details per

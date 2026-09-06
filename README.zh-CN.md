@@ -27,18 +27,20 @@ agent 先装载上下文，找缺点（每条带 `路径:行号` 证据），修
 npx skills add Finn763/pit-stop
 ```
 
-按提示选 agent，以后 `npx skills update` 更新。或装成 Claude Code 插件：
+按提示选 agent，以后 `npx skills update` 更新。分端：
 
-```
-/plugin marketplace add Finn763/pit-stop
-/plugin install pit-stop@pit-stop
-```
+| 端 | 装法 |
+|---|---|
+| Claude Code | `/plugin marketplace add Finn763/pit-stop`，再 `/plugin install pit-stop@pit-stop` |
+| Codex | `.codex-plugin` 插件，或上面 `npx skills` |
+| Cursor | `.cursor-plugin` 插件，或 `/add-plugin pit-stop` |
+| Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
+| Pi | `package.json` 即 pi-package，或拷 `skills/` |
+| OpenCode | `.opencode/` 自动发现 |
+| Hermes | `.hermes-plugin` 插件，或拷 `skills/` |
+| 其他 | `cp -r skills/pit-stop ~/.agents/skills/` |
 
-无需每仓配置——没东西可配。手动兜底：
-
-```bash
-cp -r skills/pit-stop ~/.agents/skills/   # Claude Code、Codex、Hermes、OpenCode、Pi 通用
-```
+无需每仓配置——没东西可配。
 
 Claude/Codex 插件、OpenCode 命令、Cursor/Windsurf 规则、危险命令拦截 hook 都在仓里，
 各端细节见 `docs/SPEC.md`。
