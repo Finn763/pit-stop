@@ -21,6 +21,7 @@ Skip any step = lying, not verifying.
 | Linter clean | linter output: 0 errors | partial check, extrapolation |
 | Build succeeds | build exit 0 | linter green, logs look fine |
 | Bug fixed | original symptom reproduced fixed | code changed, assumed fixed |
+| Perf improved | before/after measurement (timing/profiler delta) | code changed, "feels faster" |
 | Agent completed | VCS diff shows the changes | agent reports "success" |
 | Requirements met | line-by-line checklist | tests passing |
 

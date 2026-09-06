@@ -13,8 +13,10 @@
 - Rules: `path:line` evidence per finding; recorded decisions/known-pit lists are not
   re-litigated unless current friction justifies reopening (mark it: "reopening because…").
 - Tags: `delete` dead/speculative · `stdlib` hand-rolled stdlib · `native` platform already does it ·
-  `yagni` one-use abstraction · `shrink` same logic fewer lines · `security` trust-boundary hole ·
-  `obs` blind spot (no test/log/metric where one is owed).
+  `yagni` one-use abstraction · `shrink` same logic fewer lines · `perf` hot path/complexity/repeated
+  work — Strong needs a measured baseline (before/after timing or profiler output); no measurement
+  = Speculative, report only · `security` trust-boundary hole · `obs` blind spot (no test/log/metric
+  where one is owed).
 - Strength: `Strong` (fix now) / `Worth exploring` (fix if cheap) / `Speculative` (report only).
 - Empty: `Lean already. Ship.`
 

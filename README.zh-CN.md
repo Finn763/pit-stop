@@ -43,7 +43,7 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 - **#2："好了"但没证据。** "修好了！"、"测试过了！"——背后没有一条命令输出。
   **修法：** 先证据后结论。本轮没跑验证命令，就不许说成功。报告里只放工具输出。
 - **#3：越改越臃肿。** 建议全是没人要的抽象。**修法：** 每条发现打 tag
- （`delete/stdlib/native/yagni/shrink/security/obs`），Speculative 只报不修。
+ （`delete/stdlib/native/yagni/shrink/perf/security/obs`），Speculative 只报不修。
   没活就直说：`Lean already. Ship.`。
 
 ---

@@ -27,7 +27,7 @@
    不瞎猜（问一次答不上来就按默认最严开工，不问第二遍）。
 2. **找缺点**：先定范围再扫（用户点了名就听用户的；否则 git 热区优先，无热点才全仓）。
    硬规则：每条 `路径:行号` 证据；已记录的决策/已知坑不重审（学 mp ADR 规则：除非摩擦大到值得重开）；
-   输出用 ponytail-audit 式 tag（`delete/std-lib/native/yagni/shrink/security/obs`）一行一条，
+   输出用 ponytail-audit 式 tag（`delete/stdlib/native/yagni/shrink/perf/security/obs`）一行一条，
    每条挂推荐强度徽章（学 mp：`Strong / Worth exploring / Speculative`），Speculative 只报不修。
    空态：`Lean already. Ship.`（学 ponytail：没活就直说，不凑数）。
 3. **给建议**：Strong 项 = 现象 + 证据 + 影响 + 最小修复 + 成本；另列"不做"清单（含触发条件）。

@@ -18,7 +18,7 @@ you return once with a report.
    Missing a key fact? Ask ONCE, then proceed under strictest defaults.
 2. **Find**: scope before you scan (named target > git hot spots > full tree).
    Every finding needs `path:line` evidence. Skip recorded decisions unless friction
-   justifies reopening. Tag each: `delete/stdlib/native/yagni/shrink/security/obs`,
+   justifies reopening. Tag each: `delete/stdlib/native/yagni/shrink/perf/security/obs`,
    strength `Strong/Worth/Speculative`. Speculative = report only, never fix.
    Nothing found: say `Lean already. Ship.` — never pad.
 3. **Propose**: Strong items only. Each = symptom + evidence + impact + minimal fix + cost.

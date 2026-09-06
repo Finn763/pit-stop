@@ -46,7 +46,7 @@ Built to fix three failure modes every agent owner has met:
   behind the words. **Fix:** evidence before claims. No verification run in the
   turn = no success claim. Reports carry tool outputs, not adjectives.
 - **#3: Improvement means bloat.** Suggestions pile on abstractions nobody asked for.
-  **Fix:** every finding is tagged (`delete/stdlib/native/yagni/shrink/security/obs`),
+  **Fix:** every finding is tagged (`delete/stdlib/native/yagni/shrink/perf/security/obs`),
   Speculative items are reported, never built. Nothing found: `Lean already. Ship.`
 
 ---
