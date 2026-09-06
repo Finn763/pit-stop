@@ -21,7 +21,7 @@ never happen without your explicit word.
 ![pit-stop run loop](docs/architecture.svg)
 
 Five phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
-Interactive version: open `docs/architecture.html` in a browser.
+[▶ Interactive version](https://finn763.github.io/pit-stop/architecture.html) (pan / zoom / theme switch / focus tracing).
 
 ## Install (30 seconds)
 
