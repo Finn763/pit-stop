@@ -21,7 +21,7 @@
 
 > 评审 agent 停在"指出问题"。Pit-stop 把活干完。
 
-Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——读代码→找缺点→改→验证→汇报，
+Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——读代码→找缺点→给建议→改→汇报，
 中途不问你。**
 
 ```
@@ -59,7 +59,7 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 
 ## 护栏
 
-L2 hook（`hooks/block-destructive.sh`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条破坏性命令，exit 2 并给出原因：
+L2 hook（`hooks/block-destructive.sh`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条它认得出的破坏性命令，exit 2 并给出原因：
 
 ```
 $ echo '{"tool_input":{"command":"rm -rf /"}}' | bash hooks/block-destructive.sh
@@ -69,6 +69,23 @@ $ echo $?
 ```
 
 安全命令原样放行（`grep`、`man rm`、`git commit -m "... rm ..."`）。
+覆盖命令位 `rm`（含 `sudo`/`env`/`nohup`/`xargs`/`\rm` 变体）、`find -exec rm` 与
+`find -delete`、破坏性 git 子命令（`push`、`reset --hard`、`clean -f`、`branch -D`、
+`checkout .`、`restore .`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'`
+这类向量留给 L1 禁令和 L3 终扫。60 例测试矩阵在 `hooks/test-block-destructive.sh`。
+
+安装（Claude Code——一个文件）：
+
+```jsonc
+// .claude/settings.json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/hooks/block-destructive.sh\"" }] }
+    ]
+  }
+}
+```
 
 ---
 
@@ -89,6 +106,9 @@ npx skills add Finn763/pit-stop
 | Pi | `pi install npm:@finn763/pit-stop`（或拷 `skills/`） |
 | OpenCode | `.opencode/command/` 命令入口，或拷 `skills/` |
 | Hermes | `.hermes-plugin` 插件，或拷 `skills/` |
+| Devin | `.devin-plugin/` 插件清单（见仓库）；兜底走下面最后一行 |
+| Kimi | `.kimi-plugin/` 插件清单（见仓库）；兜底走下面最后一行 |
+| Windsurf | `.windsurf/rules/` 规则 |
 | 其他 | `cp -r skills/pit-stop ~/.agents/skills/` |
 
 无需每仓配置——没东西可配。
@@ -99,7 +119,7 @@ npx skills add Finn763/pit-stop
 
 | 领域 | 钉死的内容 |
 |---|---|
-| 运行 | 五阶段一遍过：装载 → 找 → 改 → 验证 → 汇报。中途零提问 |
+| 运行 | 五阶段一遍过：装载 → 找 → 给建议 → 改 → 汇报（验证是硬门，不算阶段）。中途零提问 |
 | 发现 | 每条带 `路径:行号` 证据、tag 和强度——Speculative 只报不修 |
 | 修复环 | 独立 reviewer 复查→再修，最多 3 轮，跨轮台账，不收敛升级给人 |
 | 验证 | 本轮没跑验证命令就不许说成功。报告只放工具输出 |
@@ -116,9 +136,11 @@ skills/pit-stop/SKILL.md          # skill 本体（<500 词核心）
 skills/pit-stop/references/       # 阶段规则（audit/fix/review/report）+ 护栏、验证
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
+hooks/test-block-destructive.sh   # 60 例护栏矩阵（CI 三 OS）
 commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # 各端适配
+.claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
 gemini-extension.json  GEMINI.md  package.json
 examples/before-after.md          # 真实战果
 docs/SPEC.md                      # 完整 spec（v3）

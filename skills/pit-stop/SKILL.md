@@ -2,13 +2,13 @@
 name: pit-stop
 description: "Use when the user asks to fully improve, overhaul, audit-and-fix, clean up tech debt, or run pit-stop on a project, repo, or codebase. Triggers: 'improve this project', 'overhaul the repo', 'audit and fix everything', 'tech debt cleanup', 'pit-stop', '全面改进', '项目体检', '进站', '重构整个项目'."
 argument-hint: "<项目路径> [--禁区 <路径或事项>...] [--max-rounds N]"
-allowed-tools: Read Edit Write Bash Glob Grep
+allowed-tools: Read Edit Write Bash Glob Grep WebFetch WebSearch
 ---
 
 # Pit-Stop
 
 F1 pit-stop for codebases: drive in, get fixed, come out faster. One instruction runs
-**read → find → fix → verify → report** with no mid-run questions. The user only says go;
+**read → find → propose → fix → report** with no mid-run questions. The user only says go;
 you return once with a report.
 
 ## The run (in order, no skipping)
@@ -36,7 +36,7 @@ you return once with a report.
 - **A subagent's "done" is not done.** Read its diff before reporting.
 - **Fuzzy spots downgrade, never guess.** Write "needs human", keep moving.
 - **Push/commit never automatic.** Changes wait in the workdir for one explicit word.
-- **Single spend fuse**: one phase burning past $20 → stop phase, write report.
+- **Single spend fuse**: one phase estimated over $20 → stop phase, write report.
 
 Details: `references/audit.md`, `references/fix.md`, `references/review.md`,
 `references/report.md`, `references/guardrails.md`, `references/verification.md`.

@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Pit-stop
 
-One instruction runs read → find → fix → verify → report on a codebase, no mid-run questions.
+One instruction runs read → find → propose → fix → report on a codebase, no mid-run questions.
 
 Before acting: load README/AGENTS.md + git status + hot spots; write MODE (what counts as a finding).
 Findings need `path:line` evidence, tagged `delete/stdlib/native/yagni/shrink/perf/security/obs`, strength `Strong/Worth/Speculative` (Speculative = report only).

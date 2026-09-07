@@ -22,7 +22,7 @@
 > Review agents stop at findings. Pit-stop finishes the job.
 
 Pit-stop is a cross-runtime agent skill: **one instruction runs a full improvement
-loop — read → find → fix → verify → report — with no mid-run questions.**
+loop — read → find → propose → fix → report — with no mid-run questions.**
 
 ```
 Use pit-stop on <project path>
@@ -62,7 +62,7 @@ Five phases, one pass, zero mid-run questions — guardrails on top, escalation 
 
 ## The guardrail
 
-The L2 hook (`hooks/block-destructive.sh`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a destructive command and it exits 2 with the reason:
+The L2 hook (`hooks/block-destructive.sh`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a command it recognizes as destructive and it exits 2 with the reason:
 
 ```
 $ echo '{"tool_input":{"command":"rm -rf /"}}' | bash hooks/block-destructive.sh
@@ -72,6 +72,25 @@ $ echo $?
 ```
 
 Safe commands pass through untouched (`grep`, `man rm`, `git commit -m "... rm ..."`).
+It covers `rm` in command position (incl. `sudo`/`env`/`nohup`/`xargs`/`\rm` variants),
+`find -exec rm` and `find -delete`, and destructive git subcommands (`push`,
+`reset --hard`, `clean -f`, `branch -D`, `checkout .`, `restore .`, `git rm`).
+Pattern matching is a tripwire, not a sandbox — `sh -c 'rm …'`-style vectors stay
+with the L1 ban and the L3 sweep. The 60-case matrix lives in
+`hooks/test-block-destructive.sh`.
+
+Install (Claude Code — one file):
+
+```jsonc
+// .claude/settings.json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/hooks/block-destructive.sh\"" }] }
+    ]
+  }
+}
+```
 
 ---
 
@@ -92,6 +111,9 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 | Pi | `pi install npm:@finn763/pit-stop` (or copy `skills/`) |
 | OpenCode | command from `.opencode/command/`, or copy `skills/` |
 | Hermes | plugin from `.hermes-plugin`, or copy `skills/` |
+| Devin | plugin manifest in `.devin-plugin/` (see repo); universal fallback below |
+| Kimi | plugin manifest in `.kimi-plugin/` (see repo); universal fallback below |
+| Windsurf | rule from `.windsurf/rules/` |
 | Anything else | `cp -r skills/pit-stop ~/.agents/skills/` |
 
 No per-repo setup — there is nothing to configure.
@@ -102,7 +124,7 @@ No per-repo setup — there is nothing to configure.
 
 | Area | What's pinned down |
 |---|---|
-| Run | Five phases, one pass: load → find → fix → verify → report. Zero mid-run questions |
+| Run | Five phases, one pass: load → find → propose → fix → report (verification is a hard gate, not a phase). Zero mid-run questions |
 | Findings | Every one with `path:line` evidence, a tag, and a strength — Speculative items are reported, never built |
 | Fix loop | Review→fix with an independent reviewer, max 3 rounds, cross-round ledger, stagnation escalates to human |
 | Verification | No verification run in the turn = no success claim. Reports carry tool output, not adjectives |
@@ -119,9 +141,11 @@ skills/pit-stop/SKILL.md          # the skill (<500-word core)
 skills/pit-stop/references/       # per-phase rules (audit/fix/review/report) + guardrails, verification
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
+hooks/test-block-destructive.sh   # 60-case guardrail matrix (CI on 3 OS)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # per-harness adapters
+.claude/settings.json  .github/workflows/ci.yml  # dogfood hook + CI matrix
 gemini-extension.json  GEMINI.md  package.json
 examples/before-after.md          # real run, real diff
 docs/SPEC.md                      # full specification (v3)

@@ -43,8 +43,10 @@
 
 - **L1 文档约束（跨端）**：禁止清单——删文件、`push --force`、读/写密钥凭据、改 CI 发布链与密钥、
   写生产数据库、对外发布（npm/PyPI/Release）。提交/推送默认不动手，等"推"字令。
-- **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive.sh`（PreToolUse 拦 push/reset --hard/clean/-D/rm/`find -delete`，
-  纯 bash+sed 无 jq/grep 依赖，解析不了 fail-closed），宿主支持就装，不支持就跳过，不强依赖。
+- **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive.sh`（PreToolUse 拦命令位 rm——含
+  sudo/env/nohup/time/xargs/`\rm` 前缀、`find -exec rm`/`-delete`、git push/reset --hard/clean -f/-D/
+  checkout ./restore ./git rm；纯 bash+awk 无 jq/grep 依赖，解析不了 fail-closed；矩阵
+  `hooks/test-block-destructive.sh` 60 例双提取模式，CI 三 OS），宿主支持就装，不支持就跳过，不强依赖。
 - **L3 终扫脚本**：推送/收尾前敏感词终扫（内联命令，0 命中才过）。
 - **Step 0 scope truth**：动手前先审"承诺"——用户要的和实际 build 的对上没有；
   对着没 build 的东西报"无 bug"是最危险的报告。
@@ -81,7 +83,8 @@ pit-stop/
   skills/pit-stop/SKILL.md   # 本体（~/.agents/skills/pit-stop）
   skills/pit-stop/references/{audit,fix,review,report,guardrails,verification}.md
   skills/pit-stop/templates/report.md
-  hooks/block-destructive.sh # L2（Claude 系）
+  hooks/block-destructive.sh  hooks/test-block-destructive.sh  # L2（Claude 系）+ 60 例矩阵
+  .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
   commands/pit-stop.toml  .opencode/command/    # slash 入口
   examples/before-after.md   # 真实战果 before/after（传播弹药）
   AGENTS.md  GEMINI.md  gemini-extension.json  package.json  CHANGELOG.md  LICENSE(MIT)
