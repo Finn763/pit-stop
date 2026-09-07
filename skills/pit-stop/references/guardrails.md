@@ -14,11 +14,22 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 
 ## L2 — Hooks (Claude-family hosts; skip gracefully elsewhere)
 
-Ship `hooks/block-destructive.sh` as PreToolUse on Bash: blocks `git push`,
-`reset --hard`, `clean -f[d]`, `branch -D`, `checkout .`, `restore .`, `git rm`,
-recursive tree deletion, and file removal in command position (after `&&`/`;`/`|` or a privilege prefix).
-No jq/grep dependency (pure bash + sed); if the command cannot be extracted,
-fail closed (exit 2) — a guardrail that silently passes is no guardrail.
+Ship `hooks/block-destructive.sh` as PreToolUse on Bash (install snippet in README).
+Blocks, at command position only — mentions in messages, arguments, and quoted
+strings pass:
+- `rm` with optional prefix `sudo [flags]` / `do` / `command` / `env` / `nohup` /
+  `time` / `xargs [flags]`, optional leading `\`, at start or after `&&`/`;`/`|`/`(`.
+- `find -exec rm` / `-execdir rm`, `find -delete`.
+- git subcommands: `push`, `reset --hard`, `clean -f[dx]`, `branch -D`,
+  `checkout .`, `restore .`, `git rm` (interleaved flags like `--`/`-q` tolerated),
+  plus bare `push --force` and the fork bomb.
+Extraction: jq when present; otherwise POSIX awk decoding `\"` and `\\`.
+`\u` escapes or unparseable input → fail closed (exit 2) — a guardrail that
+silently passes is no guardrail. Dependency: bash + awk only.
+Documented residuals — pattern matching is a tripwire, not a sandbox; these stay
+L1/L3 territory: `sh -c 'rm …'`, `python -c`, `env FOO=x rm`, `git -C <dir> push`,
+redirection truncation. Test matrix: `hooks/test-block-destructive.sh`
+(60 cases, jq/no-jq extraction modes, CI on three OS).
 Blocked tool sees: "The user has prevented you from doing this." Exit 2.
 
 ## L3 — Pre-push sweep (machine)
