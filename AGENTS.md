@@ -9,3 +9,4 @@ This repo IS a skill under construction. Rules for working in it:
 - No narrative logs in docs. Lessons, not stories. One rule per bullet.
 - Test before claiming: every behavior claim about this skill needs a real run behind it.
 - English-first in skill + README; zh-CN mirrors meaning, not words.
+- Commit messages: conventional prefix + English body. No Chinese, no attribution/credit wording.
