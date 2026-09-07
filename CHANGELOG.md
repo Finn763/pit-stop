@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.0
+
+Guardrail hardening (security checklist, attempts ledger, behavior-preservation 4 questions)
++ per-phase references split (audit/fix/review/report).
+Full notes: `docs/release-notes/v0.2.0.md` ([English](docs/release-notes/v0.2.0-en.md))
+
 ## v0.1.2
 
 Self-bootstrap run: hook rewritten (no jq/grep, fail-closed, command-position rm +

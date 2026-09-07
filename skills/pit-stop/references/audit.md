@@ -1,4 +1,4 @@
-# Phases (detail for SKILL.md)
+# Audit — Load, Find, Propose (detail for SKILL.md)
 
 ## 1. Load
 
@@ -17,6 +17,11 @@
   work — Strong needs a measured baseline (before/after timing or profiler output); no measurement
   = Speculative, report only · `security` trust-boundary hole · `obs` blind spot (no test/log/metric
   where one is owed).
+- Security coverage (at least): XSS · injection (SQL/NoSQL/command) · SSRF · path traversal ·
+  authZ/authN gaps (incl. missing tenancy checks) · secrets committed/hardcoded in source or
+  logs (pattern-detect only, never extract values — .env-class files follow guardrails L1) ·
+  unsafe deserialization · race conditions (check-then-act / TOCTOU). Call out exploitability
+  AND impact.
 - Strength: `Strong` (fix now) / `Worth exploring` (fix if cheap) / `Speculative` (report only).
 - Empty: `Lean already. Ship.`
 
@@ -25,19 +30,3 @@
 - Strong items → symptom + evidence + impact + minimal fix + cost. No "could be improved"
   without exactly what to change and why.
 - NOT-doing list with trigger conditions ("add when…").
-
-## 4. Fix
-
-- Fix → independent review → fix… until clean or `--max-rounds` (default 3).
-- Findings ledger across rounds; never fix the same item twice without new information.
-- Reviewer/fixer separation: a fix lane's own eyes read its output as clean; fresh angle catches
-  its own error class. Prefer a different model or explicit adversarial prompt for review.
-- Stop conditions: tests red and unfixable in-round · forbidden-zone touch · phase spend > $20 ·
-  two stagnant rounds. All → "needs human", keep moving to report.
-
-## 5. Report
-
-- Header: `Generated fully automatically by pit-stop`.
-- Blocks: changed (diff stat) / verified (tool outputs, exit codes) / unverified /
-  remaining incl. needs-human items.
-- Every pasted log/diff/redacted evidence: secrets, tokens, PII, intranet paths removed.

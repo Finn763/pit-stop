@@ -25,7 +25,7 @@ you return once with a report.
    Plus a NOT-doing list with its trigger conditions.
 4. **Fix**: review→fix loop with an independent reviewer (different angle beats same eyes);
    stop at clean or `--max-rounds` (default 3). Cross-round ledger, no repeat fixes.
-   Two stagnant rounds → escalate to "needs human", stop. See `references/guardrails.md`.
+   Two stagnant rounds → escalate to "needs human", stop. See `references/review.md`.
 5. **Report**: header `Generated fully automatically by pit-stop`. Four blocks —
    changed / verified (tool output) / unverified / remaining. No claim without fresh
    tool output. Secret/token/PII redaction in everything pasted. See `templates/report.md`.
@@ -38,4 +38,5 @@ you return once with a report.
 - **Push/commit never automatic.** Changes wait in the workdir for one explicit word.
 - **Single spend fuse**: one phase burning past $20 → stop phase, write report.
 
-Details: `references/phases.md`, `references/guardrails.md`, `references/verification.md`.
+Details: `references/audit.md`, `references/fix.md`, `references/review.md`,
+`references/report.md`, `references/guardrails.md`, `references/verification.md`.
