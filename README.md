@@ -116,7 +116,7 @@ No per-repo setup — there is nothing to configure.
 
 ```
 skills/pit-stop/SKILL.md          # the skill (<500-word core)
-skills/pit-stop/references/       # phases, guardrails, verification
+skills/pit-stop/references/       # per-phase rules (audit/fix/review/report) + guardrails, verification
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
 commands/ .opencode/              # slash-command entries
@@ -129,5 +129,4 @@ docs/SPEC.md                      # full specification (v3)
 
 </details>
 
-MIT. Built by studying superpowers, mattpocock/skills, ponytail, Trail of Bits
-skills, BugHunter, and code-review-graph — standing on their shoulders, see `docs/SPEC.md`.
+MIT.

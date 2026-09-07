@@ -113,7 +113,7 @@ npx skills add Finn763/pit-stop
 
 ```
 skills/pit-stop/SKILL.md          # skill 本体（<500 词核心）
-skills/pit-stop/references/       # 阶段、护栏、验证三份细节
+skills/pit-stop/references/       # 阶段规则（audit/fix/review/report）+ 护栏、验证
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
 commands/ .opencode/              # slash 命令入口
@@ -126,5 +126,4 @@ docs/SPEC.md                      # 完整 spec（v3）
 
 </details>
 
-MIT。站在 superpowers、mattpocock/skills、ponytail、Trail of Bits skills、
-BugHunter、code-review-graph 肩膀上，详见 `docs/SPEC.md`。
+MIT。
