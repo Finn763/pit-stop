@@ -86,7 +86,7 @@ npx skills add Finn763/pit-stop
 | Codex | `.codex-plugin` 插件，或上面 `npx skills` |
 | Cursor | `.cursor/rules/` 规则（自动加载）；`.cursor-plugin/` 为 Cursor Plugins 格式清单 |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
-| Pi | `package.json` 即 pi-package，或拷 `skills/` |
+| Pi | `pi install npm:@finn763/pit-stop`（或拷 `skills/`） |
 | OpenCode | `.opencode/command/` 命令入口，或拷 `skills/` |
 | Hermes | `.hermes-plugin` 插件，或拷 `skills/` |
 | 其他 | `cp -r skills/pit-stop ~/.agents/skills/` |

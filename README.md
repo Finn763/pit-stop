@@ -89,7 +89,7 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 | Codex | plugin from `.codex-plugin` (see repo), or `npx skills` above |
 | Cursor | rule from `.cursor/rules/` (auto-loaded); `.cursor-plugin/` for Cursor Plugins |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
-| Pi | pi-package via `package.json`, or copy `skills/` |
+| Pi | `pi install npm:@finn763/pit-stop` (or copy `skills/`) |
 | OpenCode | command from `.opencode/command/`, or copy `skills/` |
 | Hermes | plugin from `.hermes-plugin`, or copy `skills/` |
 | Anything else | `cp -r skills/pit-stop ~/.agents/skills/` |
