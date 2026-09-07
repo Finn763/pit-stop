@@ -21,7 +21,7 @@
 
 > 评审 agent 停在"指出问题"。Pit-stop 把活干完。
 
-Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——读代码→找缺点→给建议→改→汇报，
+Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——装载→找缺点→给建议→改→汇报，
 中途不问你。**
 
 ```
@@ -69,7 +69,7 @@ $ echo $?
 ```
 
 安全命令原样放行（`grep`、`man rm`、`git commit -m "... rm ..."`）。
-覆盖命令位 `rm`（含 `sudo`/`env`/`nohup`/`xargs`/`\rm` 变体）、`find -exec rm` 与
+覆盖命令位 `rm`（含 `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm` 变体）、`find -exec rm` 与
 `find -delete`、破坏性 git 子命令（`push`、`reset --hard`、`clean -f`、`branch -D`、
 `checkout .`、`restore .`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'`
 这类向量留给 L1 禁令和 L3 终扫。60 例测试矩阵在 `hooks/test-block-destructive.sh`。
@@ -111,7 +111,7 @@ npx skills add Finn763/pit-stop
 | Windsurf | `.windsurf/rules/` 规则 |
 | 其他 | `cp -r skills/pit-stop ~/.agents/skills/` |
 
-无需每仓配置——没东西可配。
+无需每仓配置——skill 本身零配置。hook 是唯一可选附加（按上面说明装到本仓）；别的没东西可配。
 
 ---
 

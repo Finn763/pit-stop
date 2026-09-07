@@ -22,7 +22,7 @@
 > Review agents stop at findings. Pit-stop finishes the job.
 
 Pit-stop is a cross-runtime agent skill: **one instruction runs a full improvement
-loop — read → find → propose → fix → report — with no mid-run questions.**
+loop — load → find → propose → fix → report — with no mid-run questions.**
 
 ```
 Use pit-stop on <project path>
@@ -72,7 +72,7 @@ $ echo $?
 ```
 
 Safe commands pass through untouched (`grep`, `man rm`, `git commit -m "... rm ..."`).
-It covers `rm` in command position (incl. `sudo`/`env`/`nohup`/`xargs`/`\rm` variants),
+It covers `rm` in command position (incl. `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm` variants),
 `find -exec rm` and `find -delete`, and destructive git subcommands (`push`,
 `reset --hard`, `clean -f`, `branch -D`, `checkout .`, `restore .`, `git rm`).
 Pattern matching is a tripwire, not a sandbox — `sh -c 'rm …'`-style vectors stay
@@ -116,7 +116,8 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 | Windsurf | rule from `.windsurf/rules/` |
 | Anything else | `cp -r skills/pit-stop ~/.agents/skills/` |
 
-No per-repo setup — there is nothing to configure.
+No per-repo setup for the skill itself. The hook is the one optional extra
+(repo-local, per instructions above); nothing else to configure.
 
 ---
 

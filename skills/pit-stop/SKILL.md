@@ -8,7 +8,7 @@ allowed-tools: Read Edit Write Bash Glob Grep WebFetch WebSearch
 # Pit-Stop
 
 F1 pit-stop for codebases: drive in, get fixed, come out faster. One instruction runs
-**read → find → propose → fix → report** with no mid-run questions. The user only says go;
+**load → find → propose → fix → report** with no mid-run questions. The user only says go;
 you return once with a report.
 
 ## The run (in order, no skipping)
