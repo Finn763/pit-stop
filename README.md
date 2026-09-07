@@ -21,6 +21,11 @@
 
 > Review agents stop at findings. Pit-stop finishes the job.
 
+Other agent tools stop short: PR reviewers only read pull requests; single-file
+review skills diagnose without acting; workflow skills teach phases but never run
+them end to end; architecture skills hand over a report and leave. Pit-stop stays
+in the car through the whole lap.
+
 Pit-stop is a cross-runtime agent skill: **one instruction runs a full improvement
 loop — load → find → propose → fix → report — with no mid-run questions.**
 
@@ -49,6 +54,10 @@ Built to fix three failure modes every agent owner has met:
   **Fix:** every finding is tagged (`delete/stdlib/native/yagni/shrink/perf/security/obs`),
   Speculative items are reported, never built. Nothing found: `Lean already. Ship.`
 
+> A real run: findings with `path:line` evidence 8/8 (hand-rolled first draft: 5/8), two
+> verbal-only "success" claims intercepted into tool receipts.
+> [Read the full before/after →](examples/before-after.md) — honest baseline: n=1 repo, independent re-runs welcome.
+
 ---
 
 ## How it runs
@@ -57,6 +66,12 @@ Built to fix three failure modes every agent owner has met:
 
 Five phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
 [▶ Interactive version](https://finn763.github.io/pit-stop/architecture.html)
+
+1. **Load** — read the project's own instructions, `git status`, recent-commit hot spots; write one MODE line: what counts as a finding here.
+2. **Find** — scope before scanning; every finding carries `path:line` evidence, a tag, and a strength.
+3. **Propose** — Strong items only: symptom, evidence, impact, minimal fix, cost — plus a NOT-doing list.
+4. **Fix** — review→fix loop with an independent reviewer, max 3 rounds; stagnation escalates to you.
+5. **Report** — changed / verified (tool output) / unverified / remaining; no claim without a fresh verification run.
 
 ---
 
@@ -79,7 +94,8 @@ Pattern matching is a tripwire, not a sandbox — `sh -c 'rm …'`-style vectors
 with the L1 ban and the L3 sweep. The 60-case matrix lives in
 `hooks/test-block-destructive.sh`.
 
-Install (Claude Code — one file):
+<details>
+<summary><strong>Install (Claude Code — one file)</strong></summary>
 
 ```jsonc
 // .claude/settings.json
@@ -92,6 +108,8 @@ Install (Claude Code — one file):
 }
 ```
 
+</details>
+
 ---
 
 ## Installation
@@ -99,6 +117,9 @@ Install (Claude Code — one file):
 ```bash
 npx skills add Finn763/pit-stop
 ```
+
+Two ways in, one skill: the plugin/registry paths subscribe (updates arrive on
+their own); copying `skills/` forks (you own the files, you edit them).
 
 Pick your agent when asked; update later with `npx skills update`. Per harness:
 
@@ -154,6 +175,12 @@ docs/SPEC.md                      # full specification (v3)
 
 </details>
 
+## Contributing
+
+Repo work rules live in [AGENTS.md](AGENTS.md); fixes welcome.
+
 ## License
 
 [MIT](LICENSE)
+
+*Lean already. Ship.*

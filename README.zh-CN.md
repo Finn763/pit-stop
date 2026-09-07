@@ -21,6 +21,10 @@
 
 > 评审 agent 停在"指出问题"。Pit-stop 把活干完。
 
+别的 agent 工具都差一口气：PR 评审只读 PR；单文件评审 skill 只诊断不动手；阶段式技能
+教流程却不端到端跑；架构类技能交份报告就走。Pit-stop 是陪你跑完全程的那个：
+读、修、验、报，一句话，不用下车。
+
 Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——装载→找缺点→给建议→改→汇报，
 中途不问你。**
 
@@ -46,6 +50,9 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
  （`delete/stdlib/native/yagni/shrink/perf/security/obs`），Speculative 只报不修。
   没活就直说：`Lean already. Ship.`。
 
+> 一次真实战果：发现带 `文件:行号` 证据 8/8（手搓流程只有 5/8），两条口头"成功"被拦下、逼出工具回执。
+> [看完整 before/after →](examples/before-after.md) 诚实基线：n=1 仓库，欢迎独立复跑。
+
 ---
 
 ## 运行环
@@ -54,6 +61,12 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 
 五阶段一遍过，中途零打扰——护栏在上，升级出口在下。
 [▶ 交互版](https://finn763.github.io/pit-stop/architecture.zh-CN.html)
+
+1. **装载** — 读项目自己的说明 + `git status` + 最近提交热区，先写一行 MODE：什么算发现、什么直接拒。
+2. **找缺点** — 先定范围再扫；每条发现带 `路径:行号` 证据、tag 和强度。
+3. **给建议** — 只列 Strong 项：现象、证据、影响、最小修复、成本——另附"不做"清单。
+4. **改** — 独立 reviewer 复查→再修的循环，最多 3 轮；不收敛升级给你。
+5. **汇报** — 改了/验过（工具输出）/没验/剩下四块；本轮没跑验证命令就不许说成功。
 
 ---
 
@@ -74,7 +87,8 @@ $ echo $?
 `checkout .`、`restore .`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'`
 这类向量留给 L1 禁令和 L3 终扫。60 例测试矩阵在 `hooks/test-block-destructive.sh`。
 
-安装（Claude Code——一个文件）：
+<details>
+<summary><strong>安装（Claude Code——一个文件）</strong></summary>
 
 ```jsonc
 // .claude/settings.json
@@ -87,6 +101,8 @@ $ echo $?
 }
 ```
 
+</details>
+
 ---
 
 ## 安装
@@ -94,6 +110,8 @@ $ echo $?
 ```bash
 npx skills add Finn763/pit-stop
 ```
+
+两条路，同一个 skill：插件/registry 是订阅（更新自动来），拷 `skills/` 是拥有（文件归你、随你改）。
 
 按提示选 agent，以后 `npx skills update` 更新。分端：
 
@@ -148,6 +166,12 @@ docs/SPEC.md                      # 完整 spec（v3）
 
 </details>
 
+## 参与贡献
+
+本仓库施工规则在 [AGENTS.md](AGENTS.md)；欢迎修。
+
 ## 协议
 
 [MIT](LICENSE)
+
+*Lean already. Ship.*
