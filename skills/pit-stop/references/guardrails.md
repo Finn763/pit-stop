@@ -17,7 +17,7 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 Ship `hooks/block-destructive.sh` as PreToolUse on Bash (install snippet in README).
 Blocks, at command position only — mentions in messages, arguments, and quoted
 strings pass:
-- `rm` with optional prefix `sudo [flags]` / `do` / `command` / `env` / `nohup` /
+- `rm` with optional privilege-raising prefix (with `[flags]`) / `do` / `command` / `env` / `nohup` /
   `time` / `xargs [flags]`, optional leading `\`, at start or after `&&`/`;`/`|`/`(`.
 - `find -exec rm` / `-execdir rm`, `find -delete`.
 - git subcommands: `push`, `reset --hard`, `clean -f[dx]`, `branch -D`,
