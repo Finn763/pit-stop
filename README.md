@@ -60,6 +60,21 @@ Five phases, one pass, zero mid-run questions — guardrails on top, escalation 
 
 ---
 
+## The guardrail
+
+The L2 hook (`hooks/block-destructive.sh`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a destructive command and it exits 2 with the reason:
+
+```
+$ echo '{"tool_input":{"command":"rm -rf /"}}' | bash hooks/block-destructive.sh
+BLOCKED by pit-stop: 'rm -rf /' matches file deletion (rm). Destructive ops need the human's explicit word.
+$ echo $?
+2
+```
+
+Safe commands pass through untouched (`grep`, `man rm`, `git commit -m "... rm ..."`).
+
+---
+
 ## Install (30 seconds)
 
 ```bash
@@ -83,10 +98,16 @@ No per-repo setup — there is nothing to configure.
 
 ---
 
-## Philosophy
+## What pit-stop pins down
 
-Evidence before claims · Review the fix, not the promise · Push waits for a human word ·
-Cheap to run, honest about cost (phases report spend; one phase past $20 stops itself).
+| Area | What's pinned down |
+|---|---|
+| Run | Five phases, one pass: load → find → fix → verify → report. Zero mid-run questions |
+| Findings | Every one with `path:line` evidence, a tag, and a strength — Speculative items are reported, never built |
+| Fix loop | Review→fix with an independent reviewer, max 3 rounds, cross-round ledger, stagnation escalates to human |
+| Verification | No verification run in the turn = no success claim. Reports carry tool output, not adjectives |
+| Cost | Phases report spend; one phase past $20 stops itself |
+| Push / publish | Never automatic. Everything waits in the workdir for one explicit word |
 
 ---
 

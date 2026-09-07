@@ -57,6 +57,21 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 
 ---
 
+## 护栏
+
+L2 hook（`hooks/block-destructive.sh`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条破坏性命令，exit 2 并给出原因：
+
+```
+$ echo '{"tool_input":{"command":"rm -rf /"}}' | bash hooks/block-destructive.sh
+BLOCKED by pit-stop: 'rm -rf /' matches file deletion (rm). Destructive ops need the human's explicit word.
+$ echo $?
+2
+```
+
+安全命令原样放行（`grep`、`man rm`、`git commit -m "... rm ..."`）。
+
+---
+
 ## 安装（30 秒）
 
 ```bash
@@ -80,10 +95,16 @@ npx skills add Finn763/pit-stop
 
 ---
 
-## 理念
+## pit-stop 钉死的东西
 
-先证据后结论 · 复查的是改动不是承诺 · 推送要人话 ·
-便宜且诚实（每阶段报花费，单阶段超 $20 自己停手）。
+| 领域 | 钉死的内容 |
+|---|---|
+| 运行 | 五阶段一遍过：装载 → 找 → 改 → 验证 → 汇报。中途零提问 |
+| 发现 | 每条带 `路径:行号` 证据、tag 和强度——Speculative 只报不修 |
+| 修复环 | 独立 reviewer 复查→再修，最多 3 轮，跨轮台账，不收敛升级给人 |
+| 验证 | 本轮没跑验证命令就不许说成功。报告只放工具输出 |
+| 花费 | 每阶段报花费，单阶段超 $20 自己停手 |
+| 推送/发布 | 永不自动。一切改动留在工作区等你一句明确的话 |
 
 ---
 
