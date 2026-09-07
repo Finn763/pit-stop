@@ -94,7 +94,7 @@ Install (Claude Code — one file):
 
 ---
 
-## Install (30 seconds)
+## Installation
 
 ```bash
 npx skills add Finn763/pit-stop

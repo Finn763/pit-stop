@@ -89,7 +89,7 @@ $ echo $?
 
 ---
 
-## 安装（30 秒）
+## 安装
 
 ```bash
 npx skills add Finn763/pit-stop
