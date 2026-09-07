@@ -154,4 +154,6 @@ docs/SPEC.md                      # full specification (v3)
 
 </details>
 
-MIT.
+## License
+
+[MIT](LICENSE)

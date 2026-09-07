@@ -148,4 +148,6 @@ docs/SPEC.md                      # 完整 spec（v3）
 
 </details>
 
-MIT。
+## 协议
+
+[MIT](LICENSE)
