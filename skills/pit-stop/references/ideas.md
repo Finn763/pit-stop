@@ -1,6 +1,6 @@
-# Ideas (sub-step of Report — detail for SKILL.md)
+# Ideas — phase 5 (detail for SKILL.md)
 
-Runs inside phase 5, after the fix loop has closed. Read-only: no edits, no new
+Runs after the fix loop closes, before Report. Read-only: no edits, no new
 files read, no subagent, no budget beyond the run's fuse.
 
 ## Admission — all four, else drop

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "pit-stop Run Loop",
+    "locale": "en",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Finn763/pit-stop",
+      "revision": "9b4a8f9cec3f44817a0abeb432fb79559a28e628"
+    },
+    "viewBox": [1240, 600],
+    "views": [
+      {
+        "id": "main-loop",
+        "label": "Main Loop",
+        "focus": ["go", "load", "find", "propose", "fix", "ideas", "report"],
+        "note": "One line in, six phases out, zero mid-run questions."
+      },
+      {
+        "id": "guard-escalate",
+        "label": "Guardrails & Escalation",
+        "focus": ["fix", "hook", "escalate"],
+        "note": "Mechanical block on top, human exit below."
+      }
+    ]
+  },
+  "components": [
+    { "id": "go", "type": "external", "label": "One-line instruction", "sublabel": "path + forbidden zones", "pos": [26, 320], "size": [152, 68] },
+    { "id": "load", "type": "backend", "label": "Load", "sublabel": "docs + hot spots", "pos": [210, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/audit.md", "label": "Load / Find / Propose" }] },
+    { "id": "find", "type": "backend", "label": "Find", "sublabel": "path:line evidence", "pos": [370, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/audit.md", "label": "tags + strength" }] },
+    { "id": "propose", "type": "backend", "label": "Propose", "sublabel": "ranked by ROI", "pos": [530, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/audit.md", "label": "Strong items + NOT-doing" }] },
+    { "id": "fix", "type": "backend", "label": "Fix", "sublabel": "fix-review loop", "pos": [690, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/review.md", "label": "review loop, max 3 rounds" }] },
+    { "id": "ideas", "type": "backend", "label": "Ideas", "sublabel": "read-only brainstorm", "pos": [850, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/ideas.md", "label": "phase 5 contract" }] },
+    { "id": "report", "type": "backend", "label": "Report", "sublabel": "verified-gated", "pos": [1010, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/templates/report.md", "label": "report template" }] },
+    { "id": "hook", "type": "security", "label": "Hook Guard", "sublabel": "dangerous commands", "pos": [690, 120], "size": [120, 60], "sources": [{ "path": "hooks/block-destructive.sh", "label": "L2 guardrail" }] },
+    { "id": "escalate", "type": "security", "label": "Human Needed", "sublabel": "stop and write up", "pos": [690, 520], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/guardrails.md", "label": "escalation + L1/L3" }] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "pit-stop Fully Automatic Run", "wraps": ["load", "find", "propose", "fix", "ideas", "report", "escalate"] },
+    { "kind": "security-group", "label": "Guardrails: hook block + final sweep", "wraps": ["hook", "fix"] }
+  ],
+  "connections": [
+    { "from": "go", "to": "load" },
+    { "from": "load", "to": "find" },
+    { "from": "find", "to": "propose" },
+    { "from": "propose", "to": "fix" },
+    { "from": "fix", "to": "ideas" },
+    { "from": "ideas", "to": "report" },
+    { "from": "fix", "to": "escalate", "label": "Stagnant", "variant": "security", "labelAt": [750, 394] },
+    { "from": "hook", "to": "fix", "label": "Block", "variant": "security", "labelAt": [750, 194] }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "Three-Layer Guardrails", "items": ["Bans apply on every host, hooks block mechanically on Claude-family, sweep checks secrets by machine", "Push and publish wait for your explicit word; changes sit in the workdir first"] },
+    { "dot": "emerald", "title": "Evidence Iron Law", "items": ["No verification run this turn, no success claim", "A subagent reporting done is not done — read its diff", "Reports split verified / unverified / remaining"] },
+    { "dot": "cyan", "title": "Autopilot Brakes", "items": ["Fix-review loop max 3 rounds, cross-round ledger stops repeat fixes", "Two stagnant rounds escalate to human", "One phase past $20 stops itself and writes up"] }
+  ]
+}

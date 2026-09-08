@@ -1,6 +1,6 @@
 # pit-stop — SPEC v3（2026-09-06）
 
-一句话：跨端通用 Skill，一句指令让 agent 全自动跑完「读代码→找缺点→改代码→跑测试→汇报」，
+一句话：跨端通用 Skill，一句指令让 agent 全自动跑完「读代码→找缺点→改代码→跑测试→想点子→汇报」，
 中途不问人，刹车只写报告。名字：pit-stop（F1 进站：开进来修好，出去更快，不用下车）。
 
 ## 1. 问题与非目标
@@ -19,7 +19,7 @@
 - 预算：用户拍板不设硬停。替代刹车：每阶段汇报累计花费预估；单阶段烧超 $20 自动停手写报告。
 - 缺禁区 → 默认最严（见 §4）。
 
-## 3. 五阶段（顺序执行，每段产物固定格式）
+## 3. 六阶段（顺序执行，每段产物固定格式）
 
 1. **装载**：读 README/AGENTS.md（或同类）+ `git status` + 最近 20 commits 热区。
    产物：项目一句话 + 脏区清单。（范围先于扫描，近改动权重优先）
@@ -36,7 +36,12 @@
    跨轮 findings ledger 防重复修同一条；失败尝试也进 ledger，同一死路不试第二遍；
    连续两轮不收敛 → 升级为"需人定"停手。
    失败（测试红/撞禁区/单阶段超 $20）→ 停手，写进 §5 未做区，不硬猜不绕路。
-5. **汇报**：头标注"本报告由 pit-stop 全自动生成"；固定四块——改了什么 / 验过什么（工具输出）
+5. **想点子**：修→查循环收口后，只读头脑风暴（不改文件、不读新文件、不派子代理、不另开预算）。
+   产物 ≤3 条 `[idea]` 候选：`[idea] <能力 ≤20 词> — <路径:行号> — probe: <≤12 词>`，
+   锚点必须来自本轮 ledger/diff；四条准入（锚定/成形/可证伪/新颖）全过才留，
+   杀单：缺锚点、"加测试/CI/日志/文档"（那是 obs finding）、提新依赖、与本轮修复矛盾、
+   NOT-doing 已覆盖。本轮绝不实施。
+6. **汇报**：头标注"本报告由 pit-stop 全自动生成"；固定四块——改了什么 / 验过什么（工具输出）
    / 没验什么 / 剩下什么（需人定；可附 ≤3 条 `[idea]` 候选，锚定本轮 ledger/diff，本轮绝不实施）。
    禁止无工具输出的口头成功。
 
@@ -92,7 +97,7 @@ pit-stop/
   README.md  README.zh-CN.md
   .claude-plugin/  .codex-plugin/  .cursor-plugin/  .devin-plugin/  .kimi-plugin/
   .hermes-plugin/  .cursor/  .windsurf/  .pi/extensions/    # 多端适配
-  assets/  docs/SPEC.md  docs/architecture.{html,svg}+zh-CN  docs/release-notes/
+  assets/  docs/SPEC.md  docs/architecture.{json,html,svg}+zh-CN  docs/release-notes/
 ```
 
 - 安装 v1：一行拷贝进 `~/.agents/skills/`（以后再做订阅式更新，先拷文件）。

@@ -8,7 +8,7 @@ allowed-tools: Read Edit Write Bash Glob Grep WebFetch WebSearch
 # Pit-Stop
 
 F1 pit-stop for codebases: drive in, get fixed, come out faster. One instruction runs
-**load → find → propose → fix → report** with no mid-run questions. The user only says go;
+**load → find → propose → fix → ideas → report** with no mid-run questions. The user only says go;
 you return once with a report.
 
 ## The run (in order, no skipping)
@@ -26,10 +26,14 @@ you return once with a report.
 4. **Fix**: review→fix loop with an independent reviewer (different angle beats same eyes);
    stop at clean or `--max-rounds` (default 3). Cross-round ledger, no repeat fixes.
    Two stagnant rounds → escalate to "needs human", stop. See `references/review.md`.
-5. **Report**: header `Generated fully automatically by pit-stop`. Four blocks —
+5. **Ideas**: after the loop closes, read-only brainstorm — no edits, no subagent.
+   ≤3 candidates, each anchored in this run's ledger/diff, shaped
+   `[idea] <capability ≤20 words> — <path:line> — probe: <≤12 words>`.
+   Never built this run. See `references/ideas.md`.
+6. **Report**: header `Generated fully automatically by pit-stop`. Four blocks —
    changed / verified (tool output) / unverified / remaining. No claim without fresh
-   tool output. Secret/token/PII redaction in everything pasted. Remaining may carry
-   ≤3 anchored `[idea]` candidates — never built this run. See `templates/report.md`.
+   tool output. Secret/token/PII redaction in everything pasted. The ideas ride behind
+   needs-human items in Remaining. See `templates/report.md`.
 
 ## Iron laws
 

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "pit-stop 运行环",
+    "locale": "zh-CN",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Finn763/pit-stop",
+      "revision": "9b4a8f9cec3f44817a0abeb432fb79559a28e628"
+    },
+    "viewBox": [1240, 600],
+    "views": [
+      {
+        "id": "main-loop",
+        "label": "主循环",
+        "focus": ["go", "load", "find", "propose", "fix", "ideas", "report"],
+        "note": "一句话进，六阶段出，中途零提问。"
+      },
+      {
+        "id": "guard-escalate",
+        "label": "护栏与升级",
+        "focus": ["fix", "hook", "escalate"],
+        "note": "机器拦截在上，人工出口在下。"
+      }
+    ]
+  },
+  "components": [
+    { "id": "go", "type": "external", "label": "一句话指令", "sublabel": "给路径+禁区", "pos": [26, 320], "size": [152, 68] },
+    { "id": "load", "type": "backend", "label": "装载", "sublabel": "读文档+热区", "pos": [210, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/audit.md", "label": "阶段 1-3 规则" }] },
+    { "id": "find", "type": "backend", "label": "找缺点", "sublabel": "路径行号证据", "pos": [370, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/audit.md", "label": "tag + 强度" }] },
+    { "id": "propose", "type": "backend", "label": "给建议", "sublabel": "按 ROI 排序", "pos": [530, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/audit.md", "label": "Strong 项 + 不做清单" }] },
+    { "id": "fix", "type": "backend", "label": "执行", "sublabel": "修查循环", "pos": [690, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/review.md", "label": "修查循环，最多 3 轮" }] },
+    { "id": "ideas", "type": "backend", "label": "想点子", "sublabel": "只读头脑风暴", "pos": [850, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/ideas.md", "label": "阶段 5 契约" }] },
+    { "id": "report", "type": "backend", "label": "汇报", "sublabel": "验过/未验/待定", "pos": [1010, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/templates/report.md", "label": "报告模板" }] },
+    { "id": "hook", "type": "security", "label": "Hook 拦截", "sublabel": "危险命令", "pos": [690, 120], "size": [120, 60], "sources": [{ "path": "hooks/block-destructive.sh", "label": "L2 护栏脚本" }] },
+    { "id": "escalate", "type": "security", "label": "需人定", "sublabel": "停手写报告", "pos": [690, 520], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/guardrails.md", "label": "升级 + L1/L3" }] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "pit-stop 全自动运行", "wraps": ["load", "find", "propose", "fix", "ideas", "report", "escalate"] },
+    { "kind": "security-group", "label": "护栏：hook 拦截 + 终扫", "wraps": ["hook", "fix"] }
+  ],
+  "connections": [
+    { "from": "go", "to": "load" },
+    { "from": "load", "to": "find" },
+    { "from": "find", "to": "propose" },
+    { "from": "propose", "to": "fix" },
+    { "from": "fix", "to": "ideas" },
+    { "from": "ideas", "to": "report" },
+    { "from": "fix", "to": "escalate", "label": "不收敛", "variant": "security", "labelAt": [750, 394] },
+    { "from": "hook", "to": "fix", "label": "拦截", "variant": "security", "labelAt": [750, 194] }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "护栏三层", "items": ["文档禁令所有宿主生效，hook 在 Claude 系机械拦截，终扫用机器查密钥", "推送与发布永远等用户亲口说，改完先放工作区"] },
+    { "dot": "emerald", "title": "证据铁律", "items": ["本轮没跑验证命令，就不许说成功", "子代理自报完成不算完成，先看 diff", "汇报分已验证、未验证、待定三区"] },
+    { "dot": "cyan", "title": "全自动刹车", "items": ["修查循环最多 3 轮，跨轮台账防重复修", "连续两轮不收敛就升级为需人定", "单阶段烧超 $20 自己停手写报告"] }
+  ]
+}

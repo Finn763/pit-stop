@@ -27,7 +27,7 @@ them end to end; architecture skills hand over a report and leave. Pit-stop stay
 in the car through the whole lap.
 
 Pit-stop is a cross-runtime agent skill: **one instruction runs a full improvement
-loop — load → find → propose → fix → report — with no mid-run questions.**
+loop — load → find → propose → fix → ideas → report — with no mid-run questions.**
 
 ```
 Use pit-stop on <project path>
@@ -64,14 +64,15 @@ Built to fix three failure modes every agent owner has met:
 
 ![pit-stop run loop](docs/architecture.svg)
 
-Five phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
+Six phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
 [▶ Interactive version](https://finn763.github.io/pit-stop/architecture.html)
 
 1. **Load** — read the project's own instructions, `git status`, recent-commit hot spots; write one MODE line: what counts as a finding here.
 2. **Find** — scope before scanning; every finding carries `path:line` evidence, a tag, and a strength.
 3. **Propose** — Strong items only: symptom, evidence, impact, minimal fix, cost — plus a NOT-doing list.
 4. **Fix** — review→fix loop with an independent reviewer, max 3 rounds; stagnation escalates to you.
-5. **Report** — changed / verified (tool output) / unverified / remaining (up to 3 anchored `[idea]` candidates, never built this run); no claim without a fresh verification run.
+5. **Ideas** — read-only brainstorm once the loop closes: up to 3 anchored `[idea]` candidates, each with a kill-probe, never built this run.
+6. **Report** — changed / verified (tool output) / unverified / remaining (the ideas ride behind needs-human items); no claim without a fresh verification run.
 
 ---
 
@@ -147,9 +148,10 @@ No per-repo setup for the skill itself. The hook is the one optional extra
 
 | Area | What's pinned down |
 |---|---|
-| Run | Five phases, one pass: load → find → propose → fix → report (verification is a hard gate, not a phase). Zero mid-run questions |
+| Run | Six phases, one pass: load → find → propose → fix → ideas → report (verification is a hard gate, not a phase). Zero mid-run questions |
 | Findings | Every one with `path:line` evidence, a tag, and a strength — Speculative items are reported, never built |
 | Fix loop | Review→fix with an independent reviewer, max 3 rounds, cross-round ledger, stagnation escalates to human |
+| Ideas | Phase 5, read-only: ≤3 anchored `[idea]` candidates from this run's ledger/diff, each with a kill-probe — never built in the run that raises them |
 | Verification | No verification run in the turn = no success claim. Reports carry tool output, not adjectives |
 | Cost | Phases report spend; one phase past $20 stops itself |
 | Push / publish | Never automatic. Everything waits in the workdir for one explicit word |
