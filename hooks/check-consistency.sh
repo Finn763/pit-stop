@@ -36,21 +36,26 @@ docs/SPEC.md|## 3. 六阶段
 PAIRS
 
 echo "=== 2. no stale five-phase wording ==="
-stale=$(git ls-files | while IFS= read -r f; do
-  case "$f" in
-    docs/release-notes/*|CHANGELOG.md|examples/*|docs/architecture.*|hooks/check-consistency.sh) continue ;;
-    *.png|*.jpg|*.ico|*.svg) continue ;;
-  esac
+# NOTE: no case/$( ) here — bash 3.2 (macOS /bin/bash) mis-parses case patterns
+# inside command substitutions, closing $( ) at the pattern's `)`.
+stale=""
+while IFS= read -r f; do
+  [[ "$f" == docs/release-notes/* || "$f" == CHANGELOG.md || "$f" == examples/* || "$f" == docs/architecture.* || "$f" == hooks/check-consistency.sh ]] && continue
+  [[ "$f" == *.png || "$f" == *.jpg || "$f" == *.ico || "$f" == *.svg ]] && continue
   [ -f "$f" ] || continue
-  awk '
+  if awk '
     { line = tolower($0) }
     index(line, "five phases") ||
     index($0, "五阶段") ||
     index($0, "load → find → propose → fix → report") ||
     index($0, "load, find, propose, fix, report") ||
-    index($0, "装载→找缺点→给建议→改→汇报") { print FILENAME; exit }
-  ' "$f"
-done)
+    index($0, "装载→找缺点→给建议→改→汇报") { found = 1; exit }
+    END { exit found ? 0 : 1 }
+  ' "$f"; then
+    stale="$stale $f"
+  fi
+done < <(git ls-files)
+
 if [ -n "$stale" ]; then
   bad "stale five-phase wording in:"
   printf '     %s\n' $stale
