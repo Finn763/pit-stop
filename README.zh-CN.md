@@ -165,7 +165,7 @@ commands/ .opencode/              # slash 命令入口
 .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
 gemini-extension.json  GEMINI.md  package.json
 examples/before-after.md          # 真实战果
-docs/SPEC.md                      # 完整 spec（v3）
+docs/SPEC.md                      # 完整 spec（v4）
 ```
 
 </details>

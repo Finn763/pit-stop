@@ -174,7 +174,7 @@ commands/ .opencode/              # slash-command entries
 .claude/settings.json  .github/workflows/ci.yml  # dogfood hook + CI matrix
 gemini-extension.json  GEMINI.md  package.json
 examples/before-after.md          # real run, real diff
-docs/SPEC.md                      # full specification (v3)
+docs/SPEC.md                      # full specification (v4)
 ```
 
 </details>

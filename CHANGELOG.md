@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.3.0
+
+Ideas leaves Report and becomes phase 5 — six phases now: load → find → propose → fix →
+ideas → report. The run-loop diagram is regenerated with archify for both locales and its
+specs are committed, and CI gains a consistency gate that fails on five-phase drift.
+Full notes: `docs/release-notes/v0.3.0.md` ([中文](docs/release-notes/v0.3.0-zh-CN.md))
+
 ## v0.2.0
 
 Guardrail hardening (security checklist, attempts ledger, behavior-preservation 4 questions)
