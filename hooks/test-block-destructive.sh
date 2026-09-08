@@ -14,28 +14,38 @@ BASH_BIN="$(command -v bash)"
 fail=0
 run=0
 
-stage_bin() { # temp dir with wrapper scripts for cat+awk only (jq deliberately absent)
+stage_bin() { # temp dir with wrapper scripts for the given tools (PATH staged)
   local d t p chmod_cmd
   d=$(mktemp -d) || { echo "mktemp failed" >&2; exit 1; }
   chmod_cmd=$(command -v chmod || printf '%s' /usr/bin/chmod)
-  for t in cat awk; do
+  for t in "$@"; do
     p=$(command -v "$t") || { echo "tool '$t' not found" >&2; exit 1; }
     printf '#!/bin/sh\nexec '\''%s'\'' "$@"\n' "$p" > "$d/$t" || { echo "cannot stage $t" >&2; exit 1; }
     "$chmod_cmd" +x "$d/$t" 2>/dev/null
   done
   printf '%s' "$d"
 }
-STAGED="$(stage_bin)"
+STAGED="$(stage_bin cat awk)"
+STAGED_JQ=""
+if command -v jq >/dev/null 2>&1; then
+  STAGED_JQ="$(stage_bin cat awk jq)"
+fi
 
 json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 
 # expect<TAB>command — block = hook must exit 2, pass = must exit 0.
-# The three "pass (residual)" cases are by design: pattern matching is a
+# The four "pass (residual)" cases are by design: pattern matching is a
 # tripwire, not a sandbox — these stay L1/L3 territory (see references/guardrails.md).
 cases() { cat <<'EOF'
 block	rm -rf /
 block	sudo rm -rf x
 block	sudo -n rm -rf x
+block	sudo -u root rm -rf x
+block	sudo --user root rm x
+block	sudo -u root -g wheel rm x
+block	env -u VAR rm x
+block	xargs -I {} rm
+block	time -p rm x
 block	command rm x
 block	do rm x
 block	echo a && rm -rf x
@@ -66,6 +76,16 @@ block	git rm file.txt
 block	git rm -r --cached x
 block	echo ok && git push
 block	hg push --force
+block	time find . -delete
+block	nohup find . -exec rm {} +
+block	\find . -delete
+block	/usr/bin/find . -delete
+block	/bin/rm -rf x
+block	sudo hg push --force
+block	time hg push --force
+block	hg -R repo push --force
+block	nohup git push
+block	time git push
 block	:(){ :|:& };:
 pass	grep foo README.md
 pass	man rm
@@ -85,6 +105,15 @@ pass	mkdir -p /tmp/x && ls
 pass	sh -c 'rm -rf /'
 pass	env FOO=1 rm x
 pass	git -C repo push
+pass	sudo -u root ls
+pass	git commit -m "document push --force"
+pass	echo "find . -delete"
+pass	git commit -m "block find -delete"
+pass	echo "find . -exec rm"
+pass	echo push --force
+pass	grep -r push --force .
+pass	command -v rm
+pass	git commit -m "fix \nrm dead code"
 pass	python -c "os.remove('f')"
 block	rm -rf /tmp/x; echo '{"command":"y"}'
 pass	echo '{"command":"y"}' && git status
@@ -100,6 +129,11 @@ pass	{"tool_input":{"description":"has } brace","command":"git status"}}
 block	{"tool_input":{"command":"rm -rf /tmp/x; echo '{\"command\":\"y\"}'"}}
 block	{"session_id":"a","transcript_path":"t","cwd":"D:/x","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git commit -m \"fix\" && rm -rf /tmp/x"}}
 pass	{"session_id":"a","transcript_path":"t","cwd":"D:/x","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git commit -m \"fix rm logic\" && git status"}}
+block	{"tool_input":{"command":"cd /tmp\nrm -rf x"}}
+pass	{"tool_input":{"command":"cd /tmp\necho hi"}}
+block	{"tool_input":{"command":"cd /tmp\n\trm -rf x"}}
+block	{"tool_input":{"command":"echo hi"}
+block	{"tool_input":{"command":"echo hi"}} }
 EOF
 }
 
@@ -110,7 +144,7 @@ run_case() { # expect cmd mode
   else
     payload="{\"tool_input\":{\"command\":\"$(json_escape "$cmd")\"}}"
   fi
-  printf '%s\n' "$payload" | PATH="$STAGED" "$BASH_BIN" "$HOOK" >/dev/null 2>&1
+  printf '%s\n' "$payload" | PATH="$HPATH" "$BASH_BIN" "$HOOK" >/dev/null 2>&1
   ec=$?
   run=$((run + 1))
   if { [ "$expect" = block ] && [ "$ec" -eq 2 ]; } || { [ "$expect" = pass ] && [ "$ec" -eq 0 ]; }; then
@@ -123,7 +157,7 @@ run_case() { # expect cmd mode
 
 run_raw_case() { # expect payload mode — payload is the full hook stdin JSON
   local expect="$1" payload="$2" mode="$3" ec
-  printf '%s\n' "$payload" | PATH="$STAGED" "$BASH_BIN" "$HOOK" >/dev/null 2>&1
+  printf '%s\n' "$payload" | PATH="$HPATH" "$BASH_BIN" "$HOOK" >/dev/null 2>&1
   ec=$?
   run=$((run + 1))
   if { [ "$expect" = block ] && [ "$ec" -eq 2 ]; } || { [ "$expect" = pass ] && [ "$ec" -eq 0 ]; }; then
@@ -140,6 +174,7 @@ for mode in jq no-jq; do
     echo "  skipped: jq not installed on this machine"
     continue
   fi
+  if [ "$mode" = jq ]; then HPATH="$STAGED_JQ"; else HPATH="$STAGED"; fi
   while IFS=$'\t' read -r expect cmd; do
     [ -n "$expect" ] && run_case "$expect" "$cmd" "$mode"
   done < <(cases)

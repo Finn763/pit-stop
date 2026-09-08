@@ -17,19 +17,25 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 Ship `hooks/block-destructive.sh` as PreToolUse on Bash (install snippet in README).
 Blocks, at command position only — mentions in messages, arguments, and quoted
 strings pass:
-- `rm` with optional privilege-raising prefix (with `[flags]`) / `do` / `command` / `env` / `nohup` /
-  `time` / `xargs [flags]`, optional leading `\`, at start or after `&&`/`;`/`|`/`(`.
-- `find -exec rm` / `-execdir rm`, `find -delete`.
+- `rm` with optional privilege-raising prefix (`do` / `command` / `env` / `nohup` /
+  `time` / `xargs` / `sudo` — flags on all but `command`, and `sudo`/`env`/`xargs` swallow one
+  flag value, so `sudo -u root rm` counts), an optional path (`/bin/rm`) or leading
+  `\`, at start or after `&&`/`;`/`|`/`(` — including on a later line of a multi-line command.
+- `find -exec rm` / `-execdir rm`, `find -delete` (prefixed/path-qualified `find`).
 - git subcommands: `push`, `reset --hard`, `clean -f[dx]`, `branch -D`,
   `checkout .`, `restore .`, `git rm` (interleaved flags like `--`/`-q` tolerated),
-  plus bare `push --force` and the fork bomb.
-Extraction: jq when present; otherwise POSIX awk decoding `\"` and `\\`.
-`\u` escapes or unparseable input → fail closed (exit 2) — a guardrail that
-silently passes is no guardrail. Dependency: bash + awk only.
+  plus non-git VCS force push (`hg push --force`) and the fork bomb.
+Extraction: jq when present (any JSON parse error → fail closed); otherwise POSIX awk
+decoding `\"`, `\\`, `\t`, `\n`. `\u` escapes, dangling escapes, unterminated strings, and
+structurally malformed input (string-aware brace imbalance, non-`}` tail) → fail closed (exit 2)
+— a guardrail that silently passes is no guardrail. The awk path is not a full JSON parser:
+duplicate keys resolve first-wins where jq takes the last. Dependency: bash + awk only.
 Documented residuals — pattern matching is a tripwire, not a sandbox; these stay
-L1/L3 territory: `sh -c 'rm …'`, `python -c`, `env FOO=x rm`, `git -C <dir> push`,
-redirection truncation. Test matrix: `hooks/test-block-destructive.sh`
-(60 cases, jq/no-jq extraction modes, CI on three OS).
+L1/L3 territory: `sh -c 'rm …'` / `bash -c '…'` wrappers, `eval`/backticks, `python -c`,
+`env FOO=x rm`, `git -C <dir> push`, a non-flag command token after a prefix
+(`sudo nice rm`, `command -p rm`), a single-line `if …; then rm …` body, redirection
+truncation, a multi-line string whose later line starts with a destructive op.
+Test matrix: `hooks/test-block-destructive.sh` (90 cases, jq/no-jq extraction modes, CI on three OS).
 Blocked tool sees: "The user has prevented you from doing this." Exit 2.
 
 ## L3 — Pre-push sweep (machine)

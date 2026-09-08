@@ -2,6 +2,9 @@ name: ci
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+
 jobs:
   hook-matrix:
     strategy:
@@ -25,5 +28,5 @@ jobs:
               Windows) choco install -y jq ;;
             esac || echo "jq install failed on $RUNNER_OS; no-jq mode still runs"
           fi
-      - name: Run guardrail test matrix (60 cases x jq/no-jq modes)
+      - name: Run guardrail test matrix (90 cases x jq/no-jq modes)
         run: bash hooks/test-block-destructive.sh

@@ -87,11 +87,12 @@ $ echo $?
 ```
 
 Safe commands pass through untouched (`grep`, `man rm`, `git commit -m "... rm ..."`).
-It covers `rm` in command position (incl. `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm` variants),
-`find -exec rm` and `find -delete`, and destructive git subcommands (`push`,
-`reset --hard`, `clean -f`, `branch -D`, `checkout .`, `restore .`, `git rm`).
+It covers `rm` in command position (incl. `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm`
+variants, flag values like `sudo -u root rm`, a path-qualified `/bin/rm`, and a destructive op on a
+later line of a multi-line command), `find -exec rm`/`-delete`, non-git VCS force push, and
+destructive git subcommands (`push`, `reset --hard`, `clean -f`, `branch -D`, `checkout .`, `restore .`, `git rm`).
 Pattern matching is a tripwire, not a sandbox — `sh -c 'rm …'`-style vectors stay
-with the L1 ban and the L3 sweep. The 60-case matrix lives in
+with the L1 ban and the L3 sweep. The 90-case matrix lives in
 `hooks/test-block-destructive.sh`.
 
 <details>
@@ -163,7 +164,7 @@ skills/pit-stop/SKILL.md          # the skill (<500-word core)
 skills/pit-stop/references/       # per-phase rules (audit/fix/review/report) + guardrails, verification
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
-hooks/test-block-destructive.sh   # 60-case guardrail matrix (CI on 3 OS)
+hooks/test-block-destructive.sh   # 90-case guardrail matrix (CI on 3 OS)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # per-harness adapters

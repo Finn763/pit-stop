@@ -82,10 +82,11 @@ $ echo $?
 ```
 
 安全命令原样放行（`grep`、`man rm`、`git commit -m "... rm ..."`）。
-覆盖命令位 `rm`（含 `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm` 变体）、`find -exec rm` 与
-`find -delete`、破坏性 git 子命令（`push`、`reset --hard`、`clean -f`、`branch -D`、
-`checkout .`、`restore .`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'`
-这类向量留给 L1 禁令和 L3 终扫。60 例测试矩阵在 `hooks/test-block-destructive.sh`。
+覆盖命令位 `rm`（含 `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm` 变体、
+`sudo -u root rm` 这类带 flag 值、路径式 `/bin/rm`、多行命令后续行）、`find -exec rm`/`-delete`、
+非 git VCS 强推、破坏性 git 子命令（`push`、`reset --hard`、`clean -f`、`branch -D`、
+`checkout .`、`restore .`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'` 这类向量留给
+L1 禁令和 L3 终扫。90 例测试矩阵在 `hooks/test-block-destructive.sh`。
 
 <details>
 <summary><strong>安装（Claude Code——一个文件）</strong></summary>
@@ -154,7 +155,7 @@ skills/pit-stop/SKILL.md          # skill 本体（<500 词核心）
 skills/pit-stop/references/       # 阶段规则（audit/fix/review/report）+ 护栏、验证
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
-hooks/test-block-destructive.sh   # 60 例护栏矩阵（CI 三 OS）
+hooks/test-block-destructive.sh   # 90 例护栏矩阵（CI 三 OS）
 commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # 各端适配
