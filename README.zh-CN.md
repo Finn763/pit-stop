@@ -158,6 +158,7 @@ skills/pit-stop/references/       # 阶段规则（audit/fix/review/report/ideas
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
 hooks/test-block-destructive.sh   # 90 例护栏矩阵（CI 三 OS）
+hooks/check-consistency.sh        # 六阶段/[idea] 格式一致性门（CI）
 commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # 各端适配
