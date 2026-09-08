@@ -37,7 +37,8 @@
    连续两轮不收敛 → 升级为"需人定"停手。
    失败（测试红/撞禁区/单阶段超 $20）→ 停手，写进 §5 未做区，不硬猜不绕路。
 5. **汇报**：头标注"本报告由 pit-stop 全自动生成"；固定四块——改了什么 / 验过什么（工具输出）
-   / 没验什么 / 剩下什么（需人定）。禁止无工具输出的口头成功。
+   / 没验什么 / 剩下什么（需人定；可附 ≤3 条 `[idea]` 候选，锚定本轮 ledger/diff，本轮绝不实施）。
+   禁止无工具输出的口头成功。
 
 ## 4. 判断与约束机制（三层：能强制的不只写文档）
 
@@ -81,7 +82,7 @@
 ```text
 pit-stop/
   skills/pit-stop/SKILL.md   # 本体（~/.agents/skills/pit-stop）
-  skills/pit-stop/references/{audit,fix,review,report,guardrails,verification}.md
+  skills/pit-stop/references/{audit,fix,review,report,ideas,guardrails,verification}.md
   skills/pit-stop/templates/report.md
   hooks/block-destructive.sh  hooks/test-block-destructive.sh  # L2（Claude 系）+ 90 例矩阵
   .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵

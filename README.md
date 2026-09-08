@@ -71,7 +71,7 @@ Five phases, one pass, zero mid-run questions — guardrails on top, escalation 
 2. **Find** — scope before scanning; every finding carries `path:line` evidence, a tag, and a strength.
 3. **Propose** — Strong items only: symptom, evidence, impact, minimal fix, cost — plus a NOT-doing list.
 4. **Fix** — review→fix loop with an independent reviewer, max 3 rounds; stagnation escalates to you.
-5. **Report** — changed / verified (tool output) / unverified / remaining; no claim without a fresh verification run.
+5. **Report** — changed / verified (tool output) / unverified / remaining (up to 3 anchored `[idea]` candidates, never built this run); no claim without a fresh verification run.
 
 ---
 
@@ -161,7 +161,7 @@ No per-repo setup for the skill itself. The hook is the one optional extra
 
 ```
 skills/pit-stop/SKILL.md          # the skill (<500-word core)
-skills/pit-stop/references/       # per-phase rules (audit/fix/review/report) + guardrails, verification
+skills/pit-stop/references/       # per-phase rules (audit/fix/review/report/ideas) + guardrails, verification
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
 hooks/test-block-destructive.sh   # 90-case guardrail matrix (CI on 3 OS)

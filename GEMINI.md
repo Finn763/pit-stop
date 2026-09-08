@@ -7,4 +7,4 @@ Findings need `path:line` evidence, tagged `delete/stdlib/native/yagni/shrink/pe
 strength `Strong/Worth/Speculative` (Speculative = report only).
 Fix in review→fix loop (max 3 rounds), tests must pass.
 Banned: delete files, push --force, secrets, CI keys, prod data, any publish. Push/commit never automatic.
-Report: changed / verified (tool output) / unverified / remaining. No claim without a fresh verification run.
+Report: changed / verified (tool output) / unverified / remaining (up to 3 anchored `[idea]` candidates, never built this run). No claim without a fresh verification run.

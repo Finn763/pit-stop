@@ -66,7 +66,7 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 2. **找缺点** — 先定范围再扫；每条发现带 `路径:行号` 证据、tag 和强度。
 3. **给建议** — 只列 Strong 项：现象、证据、影响、最小修复、成本——另附"不做"清单。
 4. **改** — 独立 reviewer 复查→再修的循环，最多 3 轮；不收敛升级给你。
-5. **汇报** — 改了/验过（工具输出）/没验/剩下四块；本轮没跑验证命令就不许说成功。
+5. **汇报** — 改了/验过（工具输出）/没验/剩下（可附最多 3 条有锚点的 `[idea]` 候选，本轮绝不实施）；本轮没跑验证命令就不许说成功。
 
 ---
 
@@ -152,7 +152,7 @@ npx skills add Finn763/pit-stop
 
 ```
 skills/pit-stop/SKILL.md          # skill 本体（<500 词核心）
-skills/pit-stop/references/       # 阶段规则（audit/fix/review/report）+ 护栏、验证
+skills/pit-stop/references/       # 阶段规则（audit/fix/review/report/ideas）+ 护栏、验证
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
 hooks/test-block-destructive.sh   # 90 例护栏矩阵（CI 三 OS）

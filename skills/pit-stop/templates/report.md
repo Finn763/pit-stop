@@ -17,3 +17,4 @@
 ## Remaining (needs human)
 
 - <item> — <what decision/input is needed>
+- [idea] <capability ≤20 words> — <path:line> — probe: <≤12 words>

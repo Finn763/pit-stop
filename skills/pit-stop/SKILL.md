@@ -28,7 +28,8 @@ you return once with a report.
    Two stagnant rounds → escalate to "needs human", stop. See `references/review.md`.
 5. **Report**: header `Generated fully automatically by pit-stop`. Four blocks —
    changed / verified (tool output) / unverified / remaining. No claim without fresh
-   tool output. Secret/token/PII redaction in everything pasted. See `templates/report.md`.
+   tool output. Secret/token/PII redaction in everything pasted. Remaining may carry
+   ≤3 anchored `[idea]` candidates — never built this run. See `templates/report.md`.
 
 ## Iron laws
 
@@ -39,4 +40,5 @@ you return once with a report.
 - **Single spend fuse**: one phase estimated over $20 → stop phase, write report.
 
 Details: `references/audit.md`, `references/fix.md`, `references/review.md`,
-`references/report.md`, `references/guardrails.md`, `references/verification.md`.
+`references/report.md`, `references/ideas.md`, `references/guardrails.md`,
+`references/verification.md`.
