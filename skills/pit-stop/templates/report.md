@@ -16,5 +16,6 @@
 
 ## Remaining (needs human)
 
+- Next: <the one thing the human should do now — a command or a decision>
 - <item> — <what decision/input is needed>
 - [idea] <capability ≤20 words> — <path:line> — probe: <≤12 words>
