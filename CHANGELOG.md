@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.3.1
+
+Hermes plugin registration fixed (`hermes plugins doctor` now exits 0), hub installs
+unblocked (scanner caution → safe), and the plugin installer downgraded from a hard
+block to a confirmation prompt.
+Full notes: `docs/release-notes/v0.3.1.md` ([中文](docs/release-notes/v0.3.1-zh-CN.md))
+
 ## v0.3.0
 
 Ideas leaves Report and becomes phase 5 — six phases now: load → find → propose → fix →
