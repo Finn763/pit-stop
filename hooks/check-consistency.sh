@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # Doc/adapter consistency gate (CI). Pure bash + awk — no grep/jq, same
 # constraint as the L2 guardrail, so it also runs on bare Windows shells.
-# Catches the three drift classes this repo has actually hit:
+# Catches the four drift classes this repo has actually hit:
 #   1. an entry point that still enumerates five phases (or misses Ideas)
 #   2. the [idea] format string drifting between its two homes
 #   3. SKILL.md creeping past the 500-word core cap
+#   4. the bare "sudo" token sneaking back into the skill bundle
+#      (skills-guard-v2 scores it HIGH -> hub installs hit a caution block)
 # Run: bash hooks/check-consistency.sh   (exit 0 = pass, 1 = drift)
 set -u
 
@@ -72,6 +74,35 @@ done
 echo "=== 4. SKILL.md word cap ==="
 words=$(awk '{ n += NF } END { print n + 0 }' skills/pit-stop/SKILL.md)
 if [ "$words" -lt 500 ]; then ok "SKILL.md $words words (<500)"; else bad "SKILL.md $words words (>=500)"; fi
+
+echo "=== 5. no bare sudo token in the skill bundle ==="
+# Hermes hub scans skills/pit-stop/ with skills-guard-v2: a bare "sudo" scores HIGH
+# (sudo_usage) -> caution verdict -> hub installs hit a block. Critical-tier literals
+# cannot be listed here (the literal itself would trip the scanner) — keep them out by
+# review. Tracked files only: the hub fetches the committed tree.
+# The guardrail docs describe the prefix class instead; the exact list is the RM_PREFIX
+# regex in hooks/block-destructive.sh, with cases in hooks/test-block-destructive.sh.
+# v0.3.0 regressed this once already.
+scanhit=""
+scanerr=0
+while IFS= read -r f; do
+  [[ "$f" == skills/pit-stop/* ]] || continue
+  [ -f "$f" ] || continue
+  awk '{ n = split(tolower($0), w, "[^a-z0-9]+"); for (i = 1; i <= n; i++) if (w[i] == "sudo") { found = 1; exit } } END { exit found ? 0 : 1 }' "$f"
+  rc=$?
+  if [ "$rc" -eq 0 ]; then
+    scanhit="$scanhit $f"
+  elif [ "$rc" -ne 1 ]; then
+    bad "check 5: awk failed on $f (exit $rc)"
+    scanerr=1
+  fi
+done < <(git ls-files)
+if [ -n "$scanhit" ]; then
+  bad "bare sudo token in:"
+  printf '     %s\n' $scanhit
+elif [ "$scanerr" -eq 0 ]; then
+  ok "no bare sudo token in skills/pit-stop/"
+fi
 
 if [ "$fail" -eq 0 ]; then
   echo "consistency: PASS"

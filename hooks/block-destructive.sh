@@ -115,7 +115,7 @@ esac
 
 # rm in command position: start of command or after &&/;/|/(, with an optional
 # prefix (do / command / env / nohup / time / xargs / sudo — flags allowed on all
-# but `command`; value-taking ones may consume a flag value like `-u root`), an
+# but `do` and `command`; value-taking ones may consume a flag value like `-u root`), an
 # optional path (`/bin/rm`) or leading backslash, then `rm`. Mentions in
 # arguments (grep rm, man rm, commit messages, quoted strings) pass.
 RM_FLAG='[[:space:]]+-[^ ]+([[:space:]]+[^ -][^ ]*)?'

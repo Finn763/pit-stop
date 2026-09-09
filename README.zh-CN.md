@@ -76,8 +76,8 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 L2 hook（`hooks/block-destructive.sh`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条它认得出的破坏性命令，exit 2 并给出原因：
 
 ```
-$ echo '{"tool_input":{"command":"rm -rf /"}}' | bash hooks/block-destructive.sh
-BLOCKED by pit-stop: 'rm -rf /' matches file deletion (rm). Destructive ops need the human's explicit word.
+$ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive.sh
+BLOCKED by pit-stop: 'rm -rf ~/projects' matches file deletion (rm). Destructive ops need the human's explicit word.
 $ echo $?
 2
 ```
@@ -158,7 +158,7 @@ skills/pit-stop/references/       # 阶段规则（audit/fix/review/report/ideas
 skills/pit-stop/templates/        # 报告模板
 hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
 hooks/test-block-destructive.sh   # 90 例护栏矩阵（CI 三 OS）
-hooks/check-consistency.sh        # 六阶段/[idea] 格式一致性门（CI）
+hooks/check-consistency.sh        # 六阶段/[idea] 格式/sudo 字面量门（CI）
 commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # 各端适配

@@ -17,9 +17,10 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 Ship `hooks/block-destructive.sh` as PreToolUse on Bash (install snippet in README).
 Blocks, at command position only — mentions in messages, arguments, and quoted
 strings pass:
-- `rm` with optional privilege-raising prefix (`do` / `command` / `env` / `nohup` /
-  `time` / `xargs` / `sudo` — flags on all but `command`, and `sudo`/`env`/`xargs` swallow one
-  flag value, so `sudo -u root rm` counts), an optional path (`/bin/rm`) or leading
+- `rm` with an optional privilege-raising prefix (`do` / `command` / `env` / `nohup` /
+  `time` / `xargs`, plus the run-as-another-user wrapper the test matrix covers — flags on all
+  but `do` and `command`, and the wrapper / `env` / `xargs` swallow one flag value, so a prefixed
+  `-u root rm` counts), an optional path (`/bin/rm`) or leading
   `\`, at start or after `&&`/`;`/`|`/`(` — including on a later line of a multi-line command.
 - `find -exec rm` / `-execdir rm`, `find -delete` (prefixed/path-qualified `find`).
 - git subcommands: `push`, `reset --hard`, `clean -f[dx]`, `branch -D`,
@@ -32,11 +33,11 @@ structurally malformed input (string-aware brace imbalance, non-`}` tail) → fa
 duplicate keys resolve first-wins where jq takes the last. Dependency: bash + awk only.
 Documented residuals — pattern matching is a tripwire, not a sandbox; these stay
 L1/L3 territory: `sh -c 'rm …'` / `bash -c '…'` wrappers, `eval`/backticks, `python -c`,
-`env FOO=x rm`, `git -C <dir> push`, a non-flag command token after a prefix
-(`sudo nice rm`, `command -p rm`), a single-line `if …; then rm …` body, redirection
-truncation, a multi-line string whose later line starts with a destructive op.
+`env FOO=x rm`, `git -C <dir> push`, tokens between a prefix and `rm` that the pattern
+does not consume (`<prefix> nice rm`, `command -p rm`), a single-line `if …; then rm …` body,
+redirection truncation, a multi-line string whose later line starts with a destructive op.
 Test matrix: `hooks/test-block-destructive.sh` (90 cases, jq/no-jq extraction modes, CI on three OS).
-Blocked tool sees: "The user has prevented you from doing this." Exit 2.
+Blocked call: exit 2 with the reason on stderr — the harness prevents the tool from running.
 
 ## L3 — Pre-push sweep (machine)
 

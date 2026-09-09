@@ -90,7 +90,7 @@ pit-stop/
   skills/pit-stop/references/{audit,fix,review,report,ideas,guardrails,verification}.md
   skills/pit-stop/templates/report.md
   hooks/block-destructive.sh  hooks/test-block-destructive.sh  # L2（Claude 系）+ 90 例矩阵
-  hooks/check-consistency.sh  # 六阶段/[idea] 格式一致性门（CI）
+  hooks/check-consistency.sh  # 六阶段/[idea] 格式/sudo 字面量门（CI）
   .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
   commands/pit-stop.toml  .opencode/command/    # slash 入口
   examples/before-after.md   # 真实战果 before/after（传播弹药）

@@ -4,3 +4,4 @@
 *.visual-check.json
 assets/logo-concepts/
 output/
+__pycache__/

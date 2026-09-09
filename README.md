@@ -81,8 +81,8 @@ Six phases, one pass, zero mid-run questions — guardrails on top, escalation e
 The L2 hook (`hooks/block-destructive.sh`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a command it recognizes as destructive and it exits 2 with the reason:
 
 ```
-$ echo '{"tool_input":{"command":"rm -rf /"}}' | bash hooks/block-destructive.sh
-BLOCKED by pit-stop: 'rm -rf /' matches file deletion (rm). Destructive ops need the human's explicit word.
+$ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive.sh
+BLOCKED by pit-stop: 'rm -rf ~/projects' matches file deletion (rm). Destructive ops need the human's explicit word.
 $ echo $?
 2
 ```
@@ -167,7 +167,7 @@ skills/pit-stop/references/       # per-phase rules (audit/fix/review/report/ide
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
 hooks/test-block-destructive.sh   # 90-case guardrail matrix (CI on 3 OS)
-hooks/check-consistency.sh        # six-phase / [idea]-format drift gate (CI)
+hooks/check-consistency.sh        # six-phase / [idea]-format / sudo-token gate (CI)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # per-harness adapters

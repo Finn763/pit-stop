@@ -37,7 +37,7 @@ json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 # The four "pass (residual)" cases are by design: pattern matching is a
 # tripwire, not a sandbox — these stay L1/L3 territory (see references/guardrails.md).
 cases() { cat <<'EOF'
-block	rm -rf /
+block	rm -rf ./build
 block	sudo rm -rf x
 block	sudo -n rm -rf x
 block	sudo -u root rm -rf x
@@ -59,7 +59,7 @@ block	ls | xargs rm
 block	find . -exec rm -rf {} +
 block	find . -execdir rm -rf {} +
 block	find . -name "*.tmp" -delete
-block	echo "a" && rm -rf /tmp/x
+block	echo "a" && rm -rf ./build
 block	git push origin main
 block	git push
 block	git push --force
@@ -97,12 +97,12 @@ pass	git checkout ./src/x.ts
 pass	git status
 pass	git config --global push.autoSetupRemote true
 pass	echo hello
-pass	printf "rm -rf /"
+pass	printf "rm -rf ./build"
 pass	echo "git push"
 pass	find . -name "*.tmp" -print
 pass	git remote -v
 pass	mkdir -p /tmp/x && ls
-pass	sh -c 'rm -rf /'
+pass	sh -c 'rm -rf ./build'
 pass	env FOO=1 rm x
 pass	git -C repo push
 pass	sudo -u root ls
@@ -115,7 +115,7 @@ pass	grep -r push --force .
 pass	command -v rm
 pass	git commit -m "fix \nrm dead code"
 pass	python -c "os.remove('f')"
-block	rm -rf /tmp/x; echo '{"command":"y"}'
+block	rm -rf ./build; echo '{"command":"y"}'
 pass	echo '{"command":"y"}' && git status
 EOF
 }
@@ -124,10 +124,10 @@ EOF
 # object scan — other keys, braces inside string values, embedded JSON
 # templates in the command itself.
 rawcases() { cat <<'EOF'
-block	{"tool_input":{"description":"has } brace","command":"rm -rf /"}}
+block	{"tool_input":{"description":"has } brace","command":"rm -rf ./build"}}
 pass	{"tool_input":{"description":"has } brace","command":"git status"}}
-block	{"tool_input":{"command":"rm -rf /tmp/x; echo '{\"command\":\"y\"}'"}}
-block	{"session_id":"a","transcript_path":"t","cwd":"D:/x","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git commit -m \"fix\" && rm -rf /tmp/x"}}
+block	{"tool_input":{"command":"rm -rf ./build; echo '{\"command\":\"y\"}'"}}
+block	{"session_id":"a","transcript_path":"t","cwd":"D:/x","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git commit -m \"fix\" && rm -rf ./build"}}
 pass	{"session_id":"a","transcript_path":"t","cwd":"D:/x","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"git commit -m \"fix rm logic\" && git status"}}
 block	{"tool_input":{"command":"cd /tmp\nrm -rf x"}}
 pass	{"tool_input":{"command":"cd /tmp\necho hi"}}
