@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # Doc/adapter consistency gate (CI). Pure bash + awk — no grep/jq, same
 # constraint as the L2 guardrail, so it also runs on bare Windows shells.
-# Catches the four drift classes this repo has actually hit:
-#   1. an entry point that still enumerates five phases (or misses Ideas)
-#   2. the [idea] format string drifting between its two homes
-#   3. SKILL.md creeping past the 500-word core cap
-#   4. the bare "sudo" token sneaking back into the skill bundle
-#      (skills-guard-v2 scores it HIGH -> hub installs hit a caution block)
+# Catches the drift this repo has actually hit: five-phase wording anywhere,
+# the [idea] format string, the 500-word core cap, the bare "sudo" token
+# (skills-guard-v2 scores it HIGH -> hub installs hit a caution block),
+# adapter manifests drifting apart on version, and the Hermes adapter
+# shipping plugin.yaml without a registering __init__.py.
 # Run: bash hooks/check-consistency.sh   (exit 0 = pass, 1 = drift)
 set -u
 
@@ -102,6 +101,51 @@ if [ -n "$scanhit" ]; then
   printf '     %s\n' $scanhit
 elif [ "$scanerr" -eq 0 ]; then
   ok "no bare sudo token in skills/pit-stop/"
+fi
+
+echo "=== 6. manifest versions in sync ==="
+# Every manifest below carries the same version; nothing else compares them.
+# JSON extraction takes the first field named "version" whose value starts with a
+# digit, so an array/string value that happens to equal "version" cannot fool it.
+# It assumes no escaped quotes and same-line key/value (both true today).
+known="package.json gemini-extension.json .claude-plugin/plugin.json .claude-plugin/marketplace.json .codex-plugin/plugin.json .cursor-plugin/plugin.json .devin-plugin/plugin.json .kimi-plugin/plugin.json .hermes-plugin/plugin.yaml"
+ref=""
+reffile=""
+for mf in $known; do
+  if [ ! -f "$mf" ]; then bad "$mf is missing"; continue; fi
+  if [[ "$mf" == *.yaml ]]; then
+    v=$(awk '/^version:/ { print $2; exit }' "$mf" | tr -d '\r"')
+  else
+    v=$(awk -F'"' '{ for (i = 1; i <= NF; i++) if ($i == "version" && $(i + 2) ~ /^[0-9]/) { print $(i + 2); exit } }' "$mf")
+  fi
+  if [ -z "$v" ]; then
+    bad "$mf: no version field"
+  elif [ -z "$ref" ]; then
+    ref="$v"; reffile="$mf"; ok "$mf $v (reference)"
+  elif [ "$v" = "$ref" ]; then
+    ok "$mf $v"
+  else
+    bad "$mf $v != $reffile $ref"
+  fi
+done
+# A new adapter manifest must join the list above instead of being silently skipped.
+for extra in .*-plugin/plugin.json *-extension.json; do
+  [ -f "$extra" ] || continue
+  if [[ " $known " != *" $extra "* ]]; then bad "unlisted adapter manifest: $extra (add it to check 6)"; fi
+done
+
+echo "=== 7. hermes adapter registers its skill ==="
+# v0.3.0 shipped plugin.yaml without __init__.py (doctor exit 1); v0.3.1 fixed it.
+if [ ! -f .hermes-plugin/plugin.yaml ]; then
+  bad ".hermes-plugin/plugin.yaml is missing"
+elif [ ! -f .hermes-plugin/__init__.py ]; then
+  bad ".hermes-plugin/__init__.py is missing (plugin.yaml alone = doctor exit 1)"
+elif ! has .hermes-plugin/__init__.py "def register("; then
+  bad ".hermes-plugin/__init__.py has no def register( entry point"
+elif ! has .hermes-plugin/__init__.py "register_skill"; then
+  bad ".hermes-plugin/__init__.py never calls register_skill"
+else
+  ok ".hermes-plugin/__init__.py registers a skill"
 fi
 
 if [ "$fail" -eq 0 ]; then

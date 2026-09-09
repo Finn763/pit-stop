@@ -167,7 +167,7 @@ skills/pit-stop/references/       # per-phase rules (audit/fix/review/report/ide
 skills/pit-stop/templates/        # report template
 hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
 hooks/test-block-destructive.sh   # 90-case guardrail matrix (CI on 3 OS)
-hooks/check-consistency.sh        # six-phase / [idea]-format / sudo-token gate (CI)
+hooks/check-consistency.sh        # six-phase / [idea] / manifest-version / adapter-registration / sudo gate (CI)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # per-harness adapters
