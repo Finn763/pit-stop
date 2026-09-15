@@ -8,8 +8,8 @@
   the reader does not redo ruled-out work; a stop-type item (budget, forbidden zone, stagnation)
   carries `tried: none — stopped because …`.
 - Remaining opens with one `Next:` line — the single action the human should take now
-  (a command or a decision). The reader must not scan to the bottom to find it, and it
-  is not a claim: no evidence needed for a next step, but nothing else may appear there
-  without tool output.
+  (a command or a decision). It is a line, not an item: no `tried:` field. The reader must not
+  scan to the bottom to find it, and it is not a claim: no evidence needed for a next step, but
+  nothing else may appear there without tool output.
 - Every pasted log/diff/redacted evidence: secrets, tokens, PII, intranet paths removed.
 - Layout: `templates/report.md`.

@@ -29,7 +29,7 @@
    硬规则：每条 `路径:行号` 证据；已记录的决策/已知坑不重审（除非摩擦大到值得重开）；
    输出用 tag（`delete/stdlib/native/yagni/shrink/perf/security/obs`）一行一条，
    每条挂推荐强度徽章（`Strong / Worth exploring / Speculative`），Speculative 只报不修。
-   空态：`Lean already. Ship.`（没活就直说，不凑数）。
+   空态：先写检索面（扫了哪些范围与模式），再 `Lean already. Ship.`（没活就直说，不凑数）。
 3. **给建议**：Strong 项 = 现象 + 证据 + 影响 + 最小修复 + 成本；另列"不做"清单（含触发条件）。
 4. **执行**：遵守 §4 护栏。单轮修完派独立 reviewer 复查（reviewer 与 fixer 分离，
    复查最好换模型/换视角）；修→查循环直到干净或撞 `--max-rounds`（默认 3 轮）上限；
@@ -42,7 +42,9 @@
    杀单：缺锚点、"加测试/CI/日志/文档"（那是 obs finding）、提新依赖、与本轮修复矛盾、
    NOT-doing 已覆盖。本轮绝不实施。
 6. **汇报**：头标注"本报告由 pit-stop 全自动生成"；固定四块——改了什么 / 验过什么（工具输出）
-   / 没验什么 / 剩下什么（需人定；可附 ≤3 条 `[idea]` 候选，锚定本轮 ledger/diff，本轮绝不实施）。
+   / 没验什么 / 剩下什么（首行一条 `Next:` = 人现在该做的那一件事，是"行"不是"项"、不带
+   `tried:`；需人定项带 `tried:`——尝试过的写跑过什么，停手类写 `tried: none — stopped because …`；
+   可附 ≤3 条 `[idea]` 候选，锚定本轮 ledger/diff，本轮绝不实施）。
    禁止无工具输出的口头成功。
 
 ## 4. 判断与约束机制（三层：能强制的不只写文档）

@@ -14,5 +14,6 @@
   two stagnant rounds. All → "needs human", keep moving to Ideas.
 - Two-axis recheck after a fix round: repo-style axis (does the diff follow the codebase's
   existing conventions?) and proposal axis (does it do what this round's proposal said?).
-  Small diffs: the review is a self-check of the diff; large diffs: hand it to a fresh agent
-  where the host has one.
+  Orphan cleanup that `fix.md` obliges is in scope by definition — never flag it as an
+  out-of-proposal change. Small diffs: the review is a self-check of the diff; large diffs:
+  hand it to a fresh agent where the host has one.
