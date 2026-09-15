@@ -163,7 +163,7 @@ commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # 各端适配
 .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
-gemini-extension.json  GEMINI.md  package.json
+gemini-extension.json  GEMINI.md  SECURITY.md  package.json
 examples/before-after.md          # 真实战果
 docs/SPEC.md                      # 完整 spec（v4）
 ```

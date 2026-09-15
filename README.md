@@ -172,7 +172,7 @@ commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/
 .kimi-plugin/ .hermes-plugin/ .pi/ .cursor/ .windsurf/  # per-harness adapters
 .claude/settings.json  .github/workflows/ci.yml  # dogfood hook + CI matrix
-gemini-extension.json  GEMINI.md  package.json
+gemini-extension.json  GEMINI.md  SECURITY.md  package.json
 examples/before-after.md          # real run, real diff
 docs/SPEC.md                      # full specification (v4)
 ```
