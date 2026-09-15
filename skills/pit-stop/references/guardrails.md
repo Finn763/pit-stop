@@ -45,6 +45,20 @@ Before any commit/push, scan the diff for `sk-|api_key=|gho_|sk-ant-|<intranet-I
 home paths>`. Zero hits or no push. Evidence-hygiene twin: reports and pasted logs carry
 only what convinces — redact the rest by habit, verify by sweep.
 
+## L3b — Red-to-green sweep (machine)
+
+A green run is evidence only if the tests still assert. Before claiming `Tests pass` or
+`Linter clean`, scan the **new lines of your own diff** in the target repo for
+check-skipping markers — awk only, so it runs anywhere:
+
+```bash
+git diff -U0 | awk '/^\+/ && !/^\+\+\+/ && /\.(skip|only)|xfail|@(Ignore|Disabled|unittest\.skip|ts-ignore|ts-nocheck|ts-expect-error)|\[Ignore\]|--no-verify|eslint-disable|noqa|nolint|type: ?ignore|pragma: ?no cover|t\.Skip\(/ { print }'
+```
+
+Hits are candidates, never blocks: list them in the report, and void the claim each one
+props up. A suppression arriving with your own diff and no stated reason is a finding of
+the class it suppressed.
+
 ## Step 0 — Scope truth
 
 Before hunting defects, audit the promise: what the user asked for vs what is actually

@@ -13,12 +13,15 @@ BEFORE claiming any status:
 
 Skip any step = lying, not verifying.
 
+A `Tests pass` / `Linter clean` claim whose own diff introduces a check-skipping marker
+(`guardrails.md` L3b) is void until that marker carries a stated reason or is gone.
+
 ## Claim table
 
 | Claim | Requires | Not sufficient |
 |---|---|---|
-| Tests pass | runner output: 0 failures | earlier run, "should pass" |
-| Linter clean | linter output: 0 errors | partial check, extrapolation |
+| Tests pass | runner output: N>0 tests ran, 0 failures | earlier run, "should pass", `0 failures` with no tests collected |
+| Linter clean | linter output: 0 errors, files actually linted | partial check, extrapolation, a linter that matched no files |
 | Build succeeds | build exit 0 | linter green, logs look fine |
 | Bug fixed | original symptom reproduced fixed | code changed, assumed fixed |
 | Perf improved | before/after measurement (timing/profiler delta) | code changed, "feels faster" |
