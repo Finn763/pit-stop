@@ -40,7 +40,9 @@ echo "=== 2. no stale five-phase wording ==="
 # NOTE: no case/$( ) here — bash 3.2 (macOS /bin/bash) mis-parses case patterns
 # inside command substitutions, closing $( ) at the pattern's `)`.
 stale=""
+scanned=0
 while IFS= read -r f; do
+  scanned=$((scanned + 1))
   [[ "$f" == docs/release-notes/* || "$f" == CHANGELOG.md || "$f" == examples/* || "$f" == docs/architecture.* || "$f" == hooks/check-consistency.sh ]] && continue
   [[ "$f" == *.png || "$f" == *.jpg || "$f" == *.ico || "$f" == *.svg ]] && continue
   [ -f "$f" ] || continue
@@ -57,7 +59,9 @@ while IFS= read -r f; do
   fi
 done < <(git ls-files)
 
-if [ -n "$stale" ]; then
+if [ "$scanned" -eq 0 ]; then
+  bad "check 2 scanned 0 tracked files (run this from inside a git checkout)"
+elif [ -n "$stale" ]; then
   bad "stale five-phase wording in:"
   printf '     %s\n' $stale
 else
@@ -84,9 +88,11 @@ echo "=== 5. no bare sudo token in the skill bundle ==="
 # v0.3.0 regressed this once already.
 scanhit=""
 scanerr=0
+scanned=0
 while IFS= read -r f; do
   [[ "$f" == skills/pit-stop/* ]] || continue
   [ -f "$f" ] || continue
+  scanned=$((scanned + 1))
   awk '{ n = split(tolower($0), w, "[^a-z0-9]+"); for (i = 1; i <= n; i++) if (w[i] == "sudo") { found = 1; exit } } END { exit found ? 0 : 1 }' "$f"
   rc=$?
   if [ "$rc" -eq 0 ]; then
@@ -99,6 +105,8 @@ done < <(git ls-files)
 if [ -n "$scanhit" ]; then
   bad "bare sudo token in:"
   printf '     %s\n' $scanhit
+elif [ "$scanned" -eq 0 ]; then
+  bad "check 5 scanned 0 files under skills/pit-stop/"
 elif [ "$scanerr" -eq 0 ]; then
   ok "no bare sudo token in skills/pit-stop/"
 fi
