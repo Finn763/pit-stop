@@ -4,6 +4,9 @@
 - Blocks: changed (diff stat) / verified (tool outputs, exit codes) / unverified /
   remaining incl. needs-human items.
 - Remaining: needs-human first; ≤3 `[idea]` candidates behind them (`ideas.md` contract).
+  A needs-human item that came from an attempt carries `tried: <what you already ran>` inline, so
+  the reader does not redo ruled-out work; a stop-type item (budget, forbidden zone, stagnation)
+  carries `tried: none — stopped because …`.
 - Remaining opens with one `Next:` line — the single action the human should take now
   (a command or a decision). The reader must not scan to the bottom to find it, and it
   is not a claim: no evidence needed for a next step, but nothing else may appear there
