@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.3.2
+
+CI installs and loads the plugin for real; the consistency gate checks manifest version sync
+and Hermes registration, and stops passing on an empty scan. A per-phase pass bounds what a
+run reports (noise classes out, an undowngradable floor, a unique evidence anchor), states
+the trust boundary for untrusted input, separates the review from the fix lane, and opens
+Remaining with one `Next:` action. `SECURITY.md` added.
+Full notes: `docs/release-notes/v0.3.2.md` ([中文](docs/release-notes/v0.3.2-zh-CN.md))
+
 ## v0.3.1
 
 Hermes plugin registration fixed (`hermes plugins doctor` now exits 0), hub installs
