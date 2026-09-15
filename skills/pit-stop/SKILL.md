@@ -20,7 +20,7 @@ you return once with a report.
    Every finding needs `path:line` evidence. Skip recorded decisions unless friction
    justifies reopening. Tag each: `delete/stdlib/native/yagni/shrink/perf/security/obs`,
    strength `Strong/Worth/Speculative`. Speculative = report only, never fix.
-   Nothing found: say `Lean already. Ship.` — never pad.
+   Nothing found: name the search surface first, then `Lean already. Ship.` — never pad.
 3. **Propose**: Strong items only. Each = symptom + evidence + impact + minimal fix + cost.
    Plus a NOT-doing list with its trigger conditions.
 4. **Fix**: review→fix loop with an independent reviewer (different angle beats same eyes);
