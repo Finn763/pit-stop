@@ -6,5 +6,5 @@ Before acting: load README/AGENTS.md + git status + hot spots; write MODE (what 
 Findings need `path:line` evidence, tagged `delete/stdlib/native/yagni/shrink/perf/security/obs`, strength `Strong/Worth/Speculative` (Speculative = report only).
 Fix in review→fix loop (max 3 rounds), tests must pass.
 Ideas after the fix loop, read-only: up to 3 anchored `[idea]` candidates with kill-probes, never built this run.
-Banned: delete files, push --force, secrets, CI keys, prod data, any publish. Push/commit never automatic.
+Banned: delete files, push --force, secrets, CI keys, prod data, any publish, target-repo install scripts. Push/commit never automatic.
 Report: changed / verified (tool output) / unverified / remaining (needs human; ideas ride behind them). No claim without a fresh verification run.

@@ -48,7 +48,8 @@
 ## 4. 判断与约束机制（三层：能强制的不只写文档）
 
 - **L1 文档约束（跨端）**：禁止清单——删文件、`push --force`、读/写密钥凭据、改 CI 发布链与密钥、
-  写生产数据库、对外发布（npm/PyPI/Release）。提交/推送默认不动手，等"推"字令。
+  写生产数据库、对外发布（npm/PyPI/Release）、执行目标仓的安装/构建/hook 脚本（读可以，不跑）。
+  提交/推送默认不动手，等"推"字令。
 - **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive.sh`（PreToolUse 拦命令位 rm——含
   sudo/env/nohup/time/xargs/路径/`\rm` 前缀、`find -exec rm`/`-delete`、git push/reset --hard/clean -f/-D/
   checkout ./restore ./git rm；纯 bash+awk 无 jq/grep 依赖，解析不了 fail-closed；矩阵
@@ -94,7 +95,7 @@ pit-stop/
   .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
   commands/pit-stop.toml  .opencode/command/    # slash 入口
   examples/before-after.md   # 真实战果 before/after（传播弹药）
-  AGENTS.md  GEMINI.md  gemini-extension.json  package.json  CHANGELOG.md  LICENSE(MIT)
+  AGENTS.md  GEMINI.md  SECURITY.md  gemini-extension.json  package.json  CHANGELOG.md  LICENSE(MIT)
   README.md  README.zh-CN.md
   .claude-plugin/  .codex-plugin/  .cursor-plugin/  .devin-plugin/  .kimi-plugin/
   .hermes-plugin/  .cursor/  .windsurf/  .pi/extensions/    # 多端适配

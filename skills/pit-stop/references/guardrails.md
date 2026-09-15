@@ -11,6 +11,10 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 - Write production databases or touch live data.
 - Publish anything (npm/PyPI/Release/store) or `git push` — waits for one explicit user word.
 - Rewriting history (`push --force`, rebase of shared branches).
+- Execute a target repo's install/build/hook scripts (`npm install` against an untrusted
+  manifest, `make`, `setup.py`, `install.sh`, git hooks) — read them, never run them. The test
+  command the verification gate needs is a different class: run the project's own test runner,
+  not a script that installs or builds. Prose only: the L2 hook does not cover this class yet.
 
 ## L2 — Hooks (Claude-family hosts; skip gracefully elsewhere)
 
@@ -41,7 +45,7 @@ Blocked call: exit 2 with the reason on stderr — the harness prevents the tool
 
 ## L3 — Pre-push sweep (machine)
 
-Before any commit/push, scan the diff for `sk-|api_key=|gho_|sk-ant-|<intranet-IP>|<absolute
+Before any commit/push, scan the diff for `sk-|sk-ant-|api_key=|gho_|ghp_|github_pat_|glpat-|AKIA|<private-key header>|<intranet-IP>|<absolute
 home paths>`. Zero hits or no push. Evidence-hygiene twin: reports and pasted logs carry
 only what convinces — redact the rest by habit, verify by sweep.
 
