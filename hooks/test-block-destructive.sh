@@ -68,10 +68,42 @@ block	git reset --hard HEAD
 block	git reset -q --hard HEAD
 block	git clean -fd
 block	git clean -fdx
+block	git clean -xdf
+block	git clean --force
+block	git clean -d -f
 block	git branch -D feat
+block	git branch -d -f feat
+block	git branch --delete --force feat
+block	git branch --force --delete feat
 block	git checkout .
 block	git checkout -- .
+block	git checkout HEAD -- .
+block	git checkout main -- .
+block	git checkout -f
+block	git checkout -f main
+block	git checkout --force
+block	git checkout --force main
+block	git checkout -qf main
+block	git checkout $(git rev-parse HEAD) -- .
+block	git checkout "."
+block	git checkout ./
+block	git checkout \.
+block	git checkout -- ./
+block	git checkout HEAD .
+block	git checkout main .
+block	git checkout -q HEAD .
+block	git checkout :/
+block	git checkout ././.
+block	git checkout .//
+block	git checkout '.'
+block	git checkout './'
+block	git checkout -- './'
+block	git checkout ':/'
+block	git checkout HEAD -- '././.'
+block	git restore ':/'
 block	git restore .
+block	git restore --source HEAD .
+block	git restore :/
 block	git rm file.txt
 block	git rm -r --cached x
 block	echo ok && git push
@@ -94,6 +126,13 @@ pass	git commit -m "learn git push"
 pass	grep "git push" README.md
 pass	git commit -m "drop git reset --hard from docs"
 pass	git checkout ./src/x.ts
+pass	git checkout main
+pass	git checkout 'main'
+pass	git checkout -b feat
+pass	git checkout -- .env
+pass	git clean -n -d
+pass	git branch -d feat
+pass	git restore src/x.ts
 pass	git status
 pass	git config --global push.autoSetupRemote true
 pass	echo hello

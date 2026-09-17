@@ -4,7 +4,7 @@
 # matcher Bash, command = path to this file. Blocked tool exits 2 with a refusal note.
 # Pure bash + awk (POSIX, no jq/grep dependency). Fails closed: a command that
 # cannot be extracted is blocked rather than silently passed.
-# Test matrix (90 cases x 2 extraction modes): hooks/test-block-destructive.sh
+# Test matrix (129 cases x 2 extraction modes): hooks/test-block-destructive.sh
 INPUT=$(cat)
 
 # extract .tool_input.command, decoding JSON string escapes (\" and \\).
@@ -127,7 +127,14 @@ fi
 
 # destructive git subcommands in command position only — a mention in a message
 # or an argument (grep "git push", commit messages) does not trigger.
-GIT_SUBS='(push|reset([[:space:]]+-[^ ]+)*[[:space:]]+--hard|clean[[:space:]]+-f[dx]*|branch([[:space:]]+-[^ ]+)*[[:space:]]+-D|checkout([[:space:]]+-[^ ]+)*[[:space:]]+\.|restore([[:space:]]+-[^ ]+)*[[:space:]]+\.|rm)'
+# Each subcommand allows option/argument runs before its trigger, stopping at
+# shell separators (`;&|`) so mentions and `cmd && echo ...` do not false-trigger:
+#   reset ... --hard · clean ... (-f cluster | --force) · branch -D / (-d|--delete
+#   with -f|--force, either order) · checkout/restore ... [--] <root pathspec>
+#   (`.` / `././.` / dot quoted with `"` or `'`, or backslashed / `:/`) · checkout ... (-f cluster)
+#   | --force). A plain `checkout <branch>`, `git clean -n`, `git branch -d
+#   <name>` stay pass.
+GIT_SUBS='(push|reset([[:space:]]+[^ ;&|]+)*[[:space:]]+--hard|clean([[:space:]]+[^ ;&|]+)*[[:space:]]+(--force|-[[:alpha:]]*f[[:alpha:]]*)|branch([[:space:]]+[^ ;&|]+)*[[:space:]]+(-D|(-[[:alpha:]]*d[[:alpha:]]*|--delete)([[:space:]]+[^ ;&|]+)*[[:space:]]+(-f|--force)|(-f|--force)([[:space:]]+[^ ;&|]+)*[[:space:]]+(-[[:alpha:]]*d[[:alpha:]]*|--delete))|checkout([[:space:]]+[^ ;&|]+)*[[:space:]]+(--[[:space:]]+)?([\\"'\'']*\.(/\.)*/*[\\"'\'']*|[\\"'\'']*:/[\\"'\'']*)|checkout([[:space:]]+[^ ;&|]+)*[[:space:]]+(--force|-[[:alpha:]]*f[[:alpha:]]*)|restore([[:space:]]+[^ ;&|]+)*[[:space:]]+(--[[:space:]]+)?([\\"'\'']*\.(/\.)*/*[\\"'\'']*|[\\"'\'']*:/[\\"'\'']*)|rm)'
 GIT_RE="(^|[;&|(])[[:space:]]*(${RM_PREFIX}[[:space:]]+)?([[:graph:]]*/)?[\\]?git([[:space:]]+-[^ ]+)*[[:space:]]+${GIT_SUBS}([[:space:]]|$)"
 if [[ "$CMD" =~ $GIT_RE ]]; then
   BLOCKED="destructive git command"

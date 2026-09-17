@@ -548,8 +548,10 @@
       padding-bottom: calc(0.75rem + var(--archify-nav-reserve));
     }
     html[data-present="true"]:not([data-embed="true"]) .diagram-container > svg {
-      width: 100%;
+      flex: 1 1 auto;
       height: 100%;
+      min-height: 0;
+      width: 100%;
       min-width: 0;
     }
     html[data-present="true"]:not([data-embed="true"]) .cards { display: none; }
@@ -1781,8 +1783,8 @@
       color: var(--text-muted);
       text-decoration: none;
     }
-    .semantic-passport-source:hover,
-    .semantic-passport-source:focus-visible {
+    a.semantic-passport-source:hover,
+    a.semantic-passport-source:focus-visible {
       border-color: color-mix(in srgb, var(--backend-stroke) 42%, transparent);
       background: color-mix(in srgb, var(--backend-fill) 32%, transparent);
       color: var(--text);
@@ -2844,6 +2846,11 @@
       body { padding-block: 1.25rem; }
       .header { margin-bottom: 0.875rem; }
       .cards { margin-top: 0.75rem; }
+      html[data-nav-stage-rail="true"] body { padding-block: 0.375rem; }
+      html[data-nav-stage-rail="true"] .header { margin-bottom: 0.5rem; }
+      html[data-nav-stage-rail="true"] .guided-views { margin-bottom: 0.375rem; }
+      html[data-nav-stage-rail="true"] .diagram-container[data-nav-stage-rail="true"] { padding-top: 0.5rem; }
+      html[data-nav-stage-rail="true"] .cards { margin-top: 0.375rem; }
     }
 
     html[data-preset="blueprint"] .card {

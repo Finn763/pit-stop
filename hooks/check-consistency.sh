@@ -156,6 +156,29 @@ else
   ok ".hermes-plugin/__init__.py registers a skill"
 fi
 
+echo "=== 8. finding vocabulary identical across entry points ==="
+# One canonical tag list + strength list; editing one adapter alone leaves the
+# others silently stale. A missing file or needle is a FAIL, never a skip.
+# Pins presence, not completeness: a member appended in one file alone still passes.
+while IFS='|' read -r file needle label; do
+  [ -n "$file" ] || continue
+  if [ ! -f "$file" ]; then bad "$file is missing ($label)"; continue; fi
+  if has "$file" "$needle"; then ok "$file <- $label"; else bad "$file lacks $label: $needle"; fi
+done <<'PAIRS'
+skills/pit-stop/SKILL.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+skills/pit-stop/SKILL.md|Strong/Worth/Speculative|STRENGTH
+GEMINI.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+GEMINI.md|Strong/Worth/Speculative|STRENGTH
+.cursor/rules/pit-stop.mdc|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+.cursor/rules/pit-stop.mdc|Strong/Worth/Speculative|STRENGTH
+.windsurf/rules/pit-stop.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+.windsurf/rules/pit-stop.md|Strong/Worth/Speculative|STRENGTH
+README.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+README.zh-CN.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+docs/SPEC.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+skills/pit-stop/references/ideas.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+PAIRS
+
 if [ "$fail" -eq 0 ]; then
   echo "consistency: PASS"
   exit 0

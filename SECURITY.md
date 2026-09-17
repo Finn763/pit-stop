@@ -41,7 +41,7 @@ machine behind them yet.
 |---|---|---|
 | Trust boundary, verbatim-quote rule | prose | `skills/pit-stop/references/audit.md` (Load) |
 | Banned actions, incl. deletion, secrets, publishing, history rewrite, prod writes, target-repo scripts | prose | `skills/pit-stop/references/guardrails.md` L1 |
-| Destructive-command hook (fail-closed) + 90-case matrix | **enforced** | `hooks/block-destructive.sh`, `hooks/test-block-destructive.sh` |
+| Destructive-command hook (fail-closed) + 129-case matrix | **enforced** | `hooks/block-destructive.sh`, `hooks/test-block-destructive.sh` |
 | Credential sweep before any push | prose | `skills/pit-stop/references/guardrails.md` L3 |
 | Claim invalidation when the diff skips checks | prose | `skills/pit-stop/references/guardrails.md` L3b, `skills/pit-stop/references/verification.md` |
 | Redaction of pasted logs and diffs | prose | `skills/pit-stop/references/report.md` |
