@@ -6,6 +6,8 @@
   this round's proposal and the standard — never the fix lane's reasoning. Where it does not,
   re-read the diff from that same starting point instead of recalling why you wrote it. Prefer a
   different model or an explicit adversarial prompt either way.
+- Re-check the unverified / needs-human list too: close what the repo can already answer, and
+  refuse an item that is really a `Speculative` finding wearing a needs-human label.
 - Before flagging a regression, state the strongest case for the current code at that spot; if
   you cannot, you have not read it — report that item as `Worth exploring` at most, never as a
   regression. To overturn an existing finding, name the `path:line` whose text literally

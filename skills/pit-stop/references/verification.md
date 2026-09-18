@@ -33,3 +33,10 @@ A `Tests pass` / `Linter clean` claim whose own diff introduces a check-skipping
 "should / probably / seems" · satisfaction before verification ("Done!") · commit/push/PR
 without verification · trusting agent self-reports · partial verification · "just this once" ·
 tired and wanting it over · ANY success wording without a verification run behind it.
+
+## Unverified is a state, not a verdict
+
+An item this run could not settle is never written as a result: no badge, no "likely confirmed",
+no number standing in for a fact nobody checked. Write the missing fact and the smallest command
+that settles it, so the reader runs one thing. It is also not where a `Speculative` finding parks
+— that one keeps its tag and badge in the findings list.

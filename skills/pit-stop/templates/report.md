@@ -12,7 +12,8 @@
 
 ## Unverified
 
-- <thing not yet proven>
+- Searched: <scope + patterns the run covered>; not covered: <what it skipped>
+- <thing not yet proven> — blocked by: <missing fact> — verify with: <smallest command>
 
 ## Remaining (needs human)
 

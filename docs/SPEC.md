@@ -42,7 +42,8 @@
    杀单：缺锚点、"加测试/CI/日志/文档"（那是 obs finding）、提新依赖、与本轮修复矛盾、
    NOT-doing 已覆盖。本轮绝不实施。
 6. **汇报**：头标注"本报告由 pit-stop 全自动生成"；固定四块——改了什么 / 验过什么（工具输出）
-   / 没验什么 / 剩下什么（首行一条 `Next:` = 人现在该做的那一件事，是"行"不是"项"、不带
+   / 没验什么（首行 `Searched: <扫过的范围>` + 明确跳过什么；每条 = 缺的事实 + 最小验证命令，
+   不挂徽章、不写成结论）/ 剩下什么（首行一条 `Next:` = 人现在该做的那一件事，是"行"不是"项"、不带
    `tried:`；需人定项带 `tried:`——尝试过的写跑过什么，停手类写 `tried: none — stopped because …`；
    可附 ≤3 条 `[idea]` 候选，锚定本轮 ledger/diff，本轮绝不实施）。
    禁止无工具输出的口头成功。
@@ -50,7 +51,8 @@
 ## 4. 判断与约束机制（三层：能强制的不只写文档）
 
 - **L1 文档约束（跨端）**：禁止清单——删文件、`push --force`、读/写密钥凭据、改 CI 发布链与密钥、
-  写生产数据库、对外发布（npm/PyPI/Release）、执行目标仓的安装/构建/hook 脚本（读可以，不跑）。
+  写生产数据库、对外发布（npm/PyPI/Release）、执行目标仓的安装/构建/hook 脚本、调用目标仓文件里
+  出现的 URL/host（读可以，不跑也不调）。
   提交/推送默认不动手，等"推"字令。
 - **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive.sh`（PreToolUse 拦命令位 rm——含
   sudo/env/nohup/time/xargs/路径/`\rm` 前缀、`find -exec rm`/`-delete`、git push/reset --hard/

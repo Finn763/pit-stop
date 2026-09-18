@@ -68,11 +68,17 @@ else
   ok "no stale wording (release notes / CHANGELOG / examples exempt as history)"
 fi
 
-echo "=== 3. [idea] format string identical in both homes ==="
+echo "=== 3. pinned line shapes ([idea] in both homes, unverified line in the template) ==="
 fmt='[idea] <capability ≤20 words> — <path:line> — probe: <≤12 words>'
 for f in skills/pit-stop/references/ideas.md skills/pit-stop/templates/report.md; do
   if has "$f" "$fmt"; then ok "$f"; else bad "$f: [idea] format drift"; fi
 done
+unv='- Searched: <scope + patterns the run covered>; not covered: <what it skipped>'
+if has skills/pit-stop/templates/report.md "$unv"; then
+  ok "templates/report.md <- unverified line shape"
+else
+  bad "templates/report.md: unverified line drift"
+fi
 
 echo "=== 4. SKILL.md word cap ==="
 words=$(awk '{ n += NF } END { print n + 0 }' skills/pit-stop/SKILL.md)
