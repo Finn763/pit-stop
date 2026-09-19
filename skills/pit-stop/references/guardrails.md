@@ -9,7 +9,8 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 - Read or write secrets/credentials (`.env`, keys, tokens, password stores).
 - Touch CI publish chains, signing keys, release workflows.
 - Write production databases or touch live data.
-- Publish anything (npm/PyPI/Release/store) or `git push` — waits for one explicit user word.
+- Publish anything (npm/PyPI/Release/store) or `git push` / `git commit` — waits for one
+  explicit user word.
 - Rewriting history (`push --force`, rebase of shared branches).
 - Execute a target repo's install/build/hook scripts (`npm install` against an untrusted
   manifest, `make`, `setup.py`, `install.sh`, git hooks) — read them, never run them. The test

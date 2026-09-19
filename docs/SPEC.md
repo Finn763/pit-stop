@@ -93,7 +93,7 @@
 
 ```text
 pit-stop/
-  skills/pit-stop/SKILL.md   # 本体（~/.agents/skills/pit-stop）
+  skills/pit-stop/SKILL.md   # 本体（装载点：~/.agents/skills/pit-stop 或项目内 .opencode/skills/pit-stop）
   skills/pit-stop/references/{audit,fix,review,report,ideas,guardrails,verification}.md
   skills/pit-stop/templates/report.md
   hooks/block-destructive.sh  hooks/test-block-destructive.sh  # L2（Claude 系）+ 129 例矩阵

@@ -20,13 +20,17 @@ A `Tests pass` / `Linter clean` claim whose own diff introduces a check-skipping
 
 | Claim | Requires | Not sufficient |
 |---|---|---|
-| Tests pass | runner output: N>0 tests ran, 0 failures | earlier run, "should pass", `0 failures` with no tests collected |
+| Tests pass | the project's own test runner over the suite that repo defines — never a single test file: N>0 tests ran, 0 failures | earlier run, "should pass", `0 failures` with no tests collected, one green test file standing in for a suite nobody ran |
 | Linter clean | linter output: 0 errors, files actually linted | partial check, extrapolation, a linter that matched no files |
 | Build succeeds | build exit 0 | linter green, logs look fine |
 | Bug fixed | original symptom reproduced fixed | code changed, assumed fixed |
 | Perf improved | before/after measurement (timing/profiler delta) | code changed, "feels faster" |
 | Agent completed | VCS diff shows the changes | agent reports "success" |
 | Requirements met | line-by-line checklist | tests passing |
+
+A suite run that ends red has not verified the claim: name every failing test in the report,
+including the ones this run did not cause (`report.md` — the report may not soften a failed
+verification). A failure watched scrolling past and left unnamed voids the claim it sits beside.
 
 ## Red flags — stop
 

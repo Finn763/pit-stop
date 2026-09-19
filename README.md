@@ -134,7 +134,7 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 | Cursor | rule from `.cursor/rules/` (auto-loaded); `.cursor-plugin/` for Cursor Plugins |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
 | Pi | `pi install npm:@finn763/pit-stop` (or copy `skills/`) |
-| OpenCode | command from `.opencode/command/`, or copy `skills/` |
+| OpenCode | command from `.opencode/command/`; skill discovered at `.opencode/skills/pit-stop/SKILL.md` inside the project, or one copy at `~/.agents/skills/pit-stop/` (universal row below) |
 | Hermes | plugin from `.hermes-plugin`, or copy `skills/` |
 | Devin | plugin manifest in `.devin-plugin/` (see repo); universal fallback below |
 | Kimi | plugin manifest in `.kimi-plugin/` (see repo); universal fallback below |

@@ -125,7 +125,7 @@ npx skills add Finn763/pit-stop
 | Cursor | `.cursor/rules/` 规则（自动加载）；`.cursor-plugin/` 为 Cursor Plugins 格式清单 |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
 | Pi | `pi install npm:@finn763/pit-stop`（或拷 `skills/`） |
-| OpenCode | `.opencode/command/` 命令入口，或拷 `skills/` |
+| OpenCode | `.opencode/command/` 命令入口；技能放项目内 `.opencode/skills/pit-stop/SKILL.md`，或按末行拷到 `~/.agents/skills/pit-stop/` |
 | Hermes | `.hermes-plugin` 插件，或拷 `skills/` |
 | Devin | `.devin-plugin/` 插件清单（见仓库）；兜底走下面最后一行 |
 | Kimi | `.kimi-plugin/` 插件清单（见仓库）；兜底走下面最后一行 |
