@@ -5,8 +5,9 @@
 # the [idea] format string, the 500-word core cap, the bare "sudo" token
 # (skills-guard-v2 scores it HIGH -> hub installs hit a caution block),
 # adapter manifests drifting apart on version, the Hermes adapter
-# shipping plugin.yaml without a registering __init__.py, and the on-disk run
-# ledger shrinking back to a context-only counter nobody can resume.
+# shipping plugin.yaml without a registering __init__.py, the on-disk run ledger
+# shrinking back to a context-only counter nobody can resume, and the dogfood
+# hook command drifting off the file it launches.
 # Run: bash hooks/check-consistency.sh   (exit 0 = pass, 1 = drift)
 set -u
 
@@ -220,6 +221,27 @@ skills/pit-stop/references/fix.md|.pit-stop/run.md
 skills/pit-stop/references/fix.md|templates/run.md
 skills/pit-stop/references/fix.md|.pit-stop/.gitignore
 PAIRS
+
+echo "=== 10. dogfood hook command resolves ==="
+# .claude/settings.json is the hook this repo runs on itself. It survived the rename still
+# naming the deleted .sh path: CI never executes the dogfood hook, so nothing noticed. A .sh
+# in the command is exactly what makes Claude Code on Windows prepend bash (run-hook.cmd).
+cfg=.claude/settings.json
+if [ ! -f "$cfg" ]; then
+  bad "$cfg is missing"
+elif has "$cfg" "block-destructive.sh"; then
+  bad "$cfg names a .sh path (host prepends bash; go through run-hook.cmd)"
+elif ! has "$cfg" "hooks/run-hook.cmd"; then
+  bad "$cfg: hook command does not go through hooks/run-hook.cmd"
+elif ! has "$cfg" "block-destructive"; then
+  bad "$cfg: hook command does not name hooks/block-destructive"
+elif [ ! -f hooks/run-hook.cmd ]; then
+  bad "hooks/run-hook.cmd is missing"
+elif [ ! -f hooks/block-destructive ]; then
+  bad "hooks/block-destructive is missing"
+else
+  ok "$cfg -> hooks/run-hook.cmd block-destructive"
+fi
 
 if [ "$fail" -eq 0 ]; then
   echo "consistency: PASS"

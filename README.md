@@ -112,6 +112,10 @@ with the L1 ban and the L3 sweep. The 129-case matrix plus the wrapper cases liv
 }
 ```
 
+On Windows the command runs `hooks/run-hook.cmd`, which finds bash itself (Git for Windows
+first, then `PATH`, skipping the WSL launchers). No bash on the machine is no guardrail: the
+wrapper says so on stderr and lets the call through, rather than blocking every Bash call.
+
 </details>
 
 ---
@@ -167,9 +171,9 @@ No per-repo setup for the skill itself. The hook is the one optional extra
 skills/pit-stop/SKILL.md          # the skill (<500-word core)
 skills/pit-stop/references/       # per-phase rules (audit/fix/review/report/ideas) + guardrails, verification
 skills/pit-stop/templates/        # report template + run ledger template
-hooks/block-destructive         # L2 guardrail (Claude-family hooks)
-hooks/run-hook.cmd              # cross-platform launcher (finds bash, propagates exit code)
-hooks/test-block-destructive.sh # 129-case + wrapper guardrail matrix (CI on 3 OS)
+hooks/block-destructive           # L2 guardrail (Claude-family hooks)
+hooks/run-hook.cmd                # cross-platform launcher (finds bash, propagates exit code)
+hooks/test-block-destructive.sh   # 129-case + wrapper guardrail matrix (CI on 3 OS)
 hooks/check-consistency.sh        # six-phase / [idea] / manifest-version / adapter-registration / sudo gate (CI)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/

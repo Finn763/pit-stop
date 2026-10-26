@@ -104,6 +104,10 @@ L1 禁令和 L3 终扫。129 例核心矩阵加 wrapper 用例在 `hooks/test-bl
 }
 ```
 
+Windows 上这条命令跑的是 `hooks/run-hook.cmd`，它自己去找 bash（先 Git for Windows，再 `PATH`，
+跳过 WSL 启动器）。机器上没有 bash 就没护栏：wrapper 在 stderr 明说一句然后放行，而不是把每个
+Bash 调用都拦下。
+
 </details>
 
 ---
