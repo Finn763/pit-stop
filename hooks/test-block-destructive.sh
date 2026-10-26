@@ -18,6 +18,15 @@ BASH_BIN="$(command -v bash)"
 fail=0
 run=0
 
+# The hook has no extension, so a caller that does not name bash (the wrapper's fallback,
+# a host that execs the path) needs the exec bit. Lost silently by a re-add from tmp.
+if [ -x "$HOOK" ]; then
+  printf 'PASS exec bit\n'
+else
+  printf 'FAIL exec bit: %s is not executable (git update-index --chmod=+x)\n' "$HOOK" >&2
+  fail=$((fail + 1))
+fi
+
 stage_bin() { # temp dir with wrapper scripts for the given tools (PATH staged)
   local d t p chmod_cmd
   d=$(mktemp -d) || { echo "mktemp failed" >&2; exit 1; }
@@ -181,7 +190,7 @@ EOF
 }
 
 run_case() { # expect cmd mode
-  local expect="$1" cmd="$2" mode="$3" payload ec verdict
+  local expect="$1" cmd="$2" mode="$3" payload ec
   if [ "$mode" = jq ]; then
     payload=$(printf '%s' "$cmd" | jq -Rsc '{tool_input:{command:.}}')
   else
