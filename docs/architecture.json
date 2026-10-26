@@ -8,8 +8,9 @@
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/Finn763/pit-stop",
-      "revision": "3e80b4ef6031c1260c14a9558a03eb4fa37ce646"
+      "revision": "27c8e521ab3e66088f3ddb835eaf3d990a2ae4eb"
     },
+    "output": "docs/architecture.html",
     "viewBox": [1240, 600],
     "views": [
       {
