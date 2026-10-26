@@ -73,10 +73,10 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 
 ## 护栏
 
-L2 hook（`hooks/block-destructive.sh`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条它认得出的破坏性命令，exit 2 并给出原因：
+L2 hook（`hooks/block-destructive`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条它认得出的破坏性命令，exit 2 并给出原因：
 
 ```
-$ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive.sh
+$ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive
 BLOCKED by pit-stop: 'rm -rf ~/projects' matches file deletion (rm). Destructive ops need the human's explicit word.
 $ echo $?
 2
@@ -88,7 +88,7 @@ $ echo $?
 非 git VCS 强推、破坏性 git 子命令（`push`、`reset --hard`、`clean -f[dx]`/`--force`、`branch -D`/
 `-d -f`、`checkout`/`restore` 根 pathspec——`.`、`././.`、`:/`，带引号或反斜杠也算、
 `checkout <ref> -- .`、`checkout -f`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'` 这类向量留给
-L1 禁令和 L3 终扫。129 例测试矩阵在 `hooks/test-block-destructive.sh`。
+L1 禁令和 L3 终扫。129 例核心矩阵加 wrapper 用例在 `hooks/test-block-destructive.sh`。
 
 <details>
 <summary><strong>安装（Claude Code——一个文件）</strong></summary>
@@ -98,7 +98,7 @@ L1 禁令和 L3 终扫。129 例测试矩阵在 `hooks/test-block-destructive.sh
 {
   "hooks": {
     "PreToolUse": [
-      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/hooks/block-destructive.sh\"" }] }
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd\" block-destructive" }] } // 10s 超时
     ]
   }
 }
@@ -142,7 +142,7 @@ npx skills add Finn763/pit-stop
 |---|---|
 | 运行 | 六阶段一遍过：装载 → 找 → 给建议 → 改 → 想点子 → 汇报（验证是硬门，不算阶段）。中途零提问 |
 | 发现 | 每条带 `路径:行号` 证据、tag 和强度——Speculative 只报不修 |
-| 修复环 | 独立 reviewer 复查→再修，最多 3 轮，跨轮台账，不收敛升级给人 |
+| 修复环 | 独立 reviewer 复查→再修，最多 3 轮，跨轮台账落盘（`.pit-stop/run.md`）——续跑读它而不是重来，不收敛升级给人 |
 | 想点子 | 阶段 5 只读：≤3 条锚定本轮 ledger/diff 的 `[idea]` 候选，各带 kill-probe——本轮绝不实施 |
 | 验证 | 本轮没跑验证命令就不许说成功。报告只放工具输出 |
 | 花费 | 每阶段报花费，单阶段超 $20 自己停手 |
@@ -156,9 +156,10 @@ npx skills add Finn763/pit-stop
 ```
 skills/pit-stop/SKILL.md          # skill 本体（<500 词核心）
 skills/pit-stop/references/       # 阶段规则（audit/fix/review/report/ideas）+ 护栏、验证
-skills/pit-stop/templates/        # 报告模板
-hooks/block-destructive.sh        # L2 护栏（Claude 系 hooks）
-hooks/test-block-destructive.sh   # 129 例护栏矩阵（CI 三 OS）
+skills/pit-stop/templates/        # 报告模板 + 运行台账模板
+hooks/block-destructive           # L2 护栏（Claude 系 hooks）
+hooks/run-hook.cmd                # 跨平台启动器（cmd 自己找 bash，透传 exit code）
+hooks/test-block-destructive.sh   # 129 例 + wrapper 护栏矩阵（CI 三 OS）
 hooks/check-consistency.sh        # 六阶段/[idea] 格式/manifest 版本/适配器注册/sudo 门（CI）
 commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/

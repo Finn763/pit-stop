@@ -24,7 +24,8 @@ you return once with a report.
 3. **Propose**: Strong items only. Each = symptom + evidence + impact + minimal fix + cost.
    Plus a NOT-doing list with its trigger conditions.
 4. **Fix**: review→fix loop with an independent reviewer (different angle beats same eyes);
-   stop at clean or `--max-rounds` (default 3). Cross-round ledger, no repeat fixes.
+   stop at clean or `--max-rounds` (default 3). Cross-round ledger on disk
+   (`.pit-stop/run.md`), no repeat fixes — a resumed run reads it instead of restarting.
    Two stagnant rounds → escalate to "needs human", stop. See `references/review.md`.
 5. **Ideas**: after the loop closes, read-only brainstorm — no edits, no subagent.
    ≤3 candidates, each anchored in this run's ledger/diff, shaped

@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v0.4.0
+
+The L2 guardrail is launched through `hooks/run-hook.cmd`, a polyglot that finds bash on Windows
+itself and propagates the hook's exit code — the old `bash .../block-destructive.sh` command
+could silently do nothing, and the hook lost its extension so the host stops prepending `bash`.
+The round counter and both ledgers moved to `<target>/.pit-stop/run.md`: a compaction can no
+longer hand a run free rounds or repeat a fix, and a resumed run reads the disk instead of
+restarting. Consistency check 9 pins the ledger contract.
+Full notes: `docs/release-notes/v0.4.0.md` ([中文](docs/release-notes/v0.4.0-zh-CN.md))
+
 ## v0.3.2
 
 CI installs and loads the plugin for real; the consistency gate checks manifest version sync

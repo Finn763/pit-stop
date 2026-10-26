@@ -1,10 +1,12 @@
 #!/bin/bash
 # pit-stop L2 guardrail: PreToolUse hook blocking destructive git/shell commands.
 # Install (Claude Code): project `.claude/settings.json` or global `~/.claude/settings.json`,
-# matcher Bash, command = path to this file. Blocked tool exits 2 with a refusal note.
+# matcher Bash, command = `"$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd" block-destructive`.
+# Blocked tool exits 2 with a refusal note.
 # Pure bash + awk (POSIX, no jq/grep dependency). Fails closed: a command that
 # cannot be extracted is blocked rather than silently passed.
-# Test matrix (129 cases x 2 extraction modes): hooks/test-block-destructive.sh
+# Test matrix (129 core cases x 2 extraction modes, plus wrapper cases):
+# hooks/test-block-destructive.sh
 INPUT=$(cat)
 
 # extract .tool_input.command, decoding JSON string escapes (\" and \\).

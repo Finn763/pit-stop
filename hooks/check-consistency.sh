@@ -4,8 +4,9 @@
 # Catches the drift this repo has actually hit: five-phase wording anywhere,
 # the [idea] format string, the 500-word core cap, the bare "sudo" token
 # (skills-guard-v2 scores it HIGH -> hub installs hit a caution block),
-# adapter manifests drifting apart on version, and the Hermes adapter
-# shipping plugin.yaml without a registering __init__.py.
+# adapter manifests drifting apart on version, the Hermes adapter
+# shipping plugin.yaml without a registering __init__.py, and the on-disk run
+# ledger shrinking back to a context-only counter nobody can resume.
 # Run: bash hooks/check-consistency.sh   (exit 0 = pass, 1 = drift)
 set -u
 
@@ -90,7 +91,7 @@ echo "=== 5. no bare sudo token in the skill bundle ==="
 # cannot be listed here (the literal itself would trip the scanner) — keep them out by
 # review. Tracked files only: the hub fetches the committed tree.
 # The guardrail docs describe the prefix class instead; the exact list is the RM_PREFIX
-# regex in hooks/block-destructive.sh, with cases in hooks/test-block-destructive.sh.
+# regex in hooks/block-destructive, with cases in hooks/test-block-destructive.sh.
 # v0.3.0 regressed this once already.
 scanhit=""
 scanerr=0
@@ -183,6 +184,41 @@ README.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
 README.zh-CN.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
 docs/SPEC.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
 skills/pit-stop/references/ideas.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+PAIRS
+
+echo "=== 9. on-disk run ledger contract ==="
+# The round counter and the findings/attempts ledgers live in <target>/.pit-stop/run.md,
+# not in context: a compaction erases context, and a resumed run that lost the counter
+# hands itself free rounds (v0.4.0 exists because of that failure mode).
+# Pins the ledger shapes and the one path SKILL.md sends the agent to.
+tmpl=skills/pit-stop/templates/run.md
+if [ ! -f "$tmpl" ]; then
+  bad "$tmpl is missing"
+else
+  while IFS= read -r needle; do
+    [ -n "$needle" ] || continue
+    if has "$tmpl" "$needle"; then ok "$tmpl <- $needle"; else bad "$tmpl lacks: $needle"; fi
+  done <<'SHAPES'
+STATUS:
+MAX_ROUNDS:
+- LEDGER open |
+- LEDGER fixed |
+- LEDGER skip |
+- LEDGER speculative |
+- ATTEMPT revert |
+- ATTEMPT env |
+- ROUND <N> |
+SHAPES
+fi
+while IFS='|' read -r file needle; do
+  [ -n "$file" ] || continue
+  if [ ! -f "$file" ]; then bad "$file is missing"; continue; fi
+  if has "$file" "$needle"; then ok "$file <- $needle"; else bad "$file lacks: $needle"; fi
+done <<'PAIRS'
+skills/pit-stop/SKILL.md|.pit-stop/run.md
+skills/pit-stop/references/fix.md|.pit-stop/run.md
+skills/pit-stop/references/fix.md|templates/run.md
+skills/pit-stop/references/fix.md|.pit-stop/.gitignore
 PAIRS
 
 if [ "$fail" -eq 0 ]; then

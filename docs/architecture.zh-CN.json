@@ -34,7 +34,7 @@
     { "id": "fix", "type": "backend", "label": "执行", "sublabel": "修查循环", "pos": [690, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/review.md", "label": "修查循环，最多 3 轮" }] },
     { "id": "ideas", "type": "backend", "label": "想点子", "sublabel": "只读头脑风暴", "pos": [850, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/ideas.md", "label": "阶段 5 契约" }] },
     { "id": "report", "type": "backend", "label": "汇报", "sublabel": "验过/未验/待定", "pos": [1010, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/templates/report.md", "label": "报告模板" }] },
-    { "id": "hook", "type": "security", "label": "Hook 拦截", "sublabel": "危险命令", "pos": [690, 120], "size": [120, 60], "sources": [{ "path": "hooks/block-destructive.sh", "label": "L2 护栏脚本" }] },
+    { "id": "hook", "type": "security", "label": "Hook 拦截", "sublabel": "危险命令", "pos": [690, 120], "size": [120, 60], "sources": [{ "path": "hooks/block-destructive", "label": "L2 护栏脚本" }] },
     { "id": "escalate", "type": "security", "label": "需人定", "sublabel": "停手写报告", "pos": [690, 520], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/guardrails.md", "label": "升级 + L1/L3" }] }
   ],
   "boundaries": [

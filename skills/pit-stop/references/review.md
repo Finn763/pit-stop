@@ -1,6 +1,8 @@
 # Review (detail for SKILL.md)
 
-- Fix → independent review → fix… until clean or `--max-rounds` (default 3).
+- Fix → independent review → fix… until clean or `--max-rounds` (default 3). The round number
+  and what each round already tried come from the on-disk ledger (`.pit-stop/run.md`, `fix.md`),
+  not from memory — recount from disk on entry, so a compaction cannot hand you a free round.
 - Fix the reviewed range before the first edit: record `git rev-parse HEAD` then, and review that
   ref against the working tree — never against a branch that moved underneath the run (`git diff
   main` shows main's newer files as deletions of yours). The run does not commit, so the range is

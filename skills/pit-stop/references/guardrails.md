@@ -20,7 +20,10 @@ a machine sweep at the end. Never rely on prose alone where enforcement exists.
 
 ## L2 — Hooks (Claude-family hosts; skip gracefully elsewhere)
 
-Ship `hooks/block-destructive.sh` as PreToolUse on Bash (install snippet in README).
+Ship `hooks/block-destructive` as PreToolUse on Bash, launched through
+`hooks/run-hook.cmd` (install snippet in README). The wrapper exists because a
+`.sh` inside the hook command makes Claude Code on Windows prepend `bash` to it
+(`bash bash ...`), and because `bash` off `PATH` must not fail silently.
 Blocks, at command position only — mentions in messages, arguments, and quoted
 strings pass:
 - `rm` with an optional privilege-raising prefix (`do` / `command` / `env` / `nohup` /
@@ -49,7 +52,8 @@ redirection truncation, a multi-line string whose later line starts with a destr
 short flags that fuse a trigger pair (`git branch -fd <name>`).
 A shell comment after a safe command can read as a match (`git checkout main # -- .` blocks) —
 accepted, fail-closed noise.
-Test matrix: `hooks/test-block-destructive.sh` (129 cases, jq/no-jq extraction modes, CI on three OS).
+Test matrix: `hooks/test-block-destructive.sh` (129 cases in jq/no-jq extraction modes
+plus the wrapper cases, CI on three OS).
 Blocked call: exit 2 with the reason on stderr — the harness prevents the tool from running.
 
 ## L3 — Pre-push sweep (machine)

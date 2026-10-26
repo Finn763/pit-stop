@@ -1,14 +1,18 @@
 #!/bin/bash
 # pit-stop L2 guardrail — test matrix.
-# Runs every case through hooks/block-destructive.sh exactly as Claude Code
+# Runs every case through hooks/block-destructive exactly as Claude Code
 # calls it: JSON on stdin; exit 2 = blocked, exit 0 = allowed.
+# A wrapper section at the end covers hooks/run-hook.cmd, the command the host
+# actually invokes.
 # Two modes per case:
 #   jq     — extraction via jq (skipped when jq is not installed)
 #   no-jq  — POSIX awk fallback (PATH staged: jq removed, cat+awk staged in)
 # Exit 0 = every runnable expectation met; 1 = any mismatch.
 # CI runs this on ubuntu/macos/windows: .github/workflows/ci.yml
 set -u
-HOOK="$(cd "$(dirname "$0")" && pwd)/block-destructive.sh"
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+HOOK="$HOOK_DIR/block-destructive"
+WRAPPER="$HOOK_DIR/run-hook.cmd"
 # Absolute path: `PATH=x bash` would look up bash itself on the new PATH.
 BASH_BIN="$(command -v bash)"
 fail=0
@@ -221,6 +225,37 @@ for mode in jq no-jq; do
     [ -n "$expect" ] && run_raw_case "$expect" "$payload" "$mode"
   done < <(rawcases)
 done
+
+echo "=== wrapper: run-hook.cmd (the command the host resolves) ==="
+# Each case above calls the hook directly. These cover the resolution step: the
+# polyglot header has to parse under sh, and a real exit 2 has to survive the
+# wrapper -- a wrapper that always reports success silently disables the guard.
+run_wrapper() { # label expect payload cmd...
+  local label="$1" expect="$2" payload="$3" ec
+  shift 3
+  printf '%s\n' "$payload" | "$@" >/dev/null 2>&1
+  ec=$?
+  run=$((run + 1))
+  if [ "$ec" -eq "$expect" ]; then
+    return 0
+  fi
+  fail=$((fail + 1))
+  printf 'FAIL  [wrapper] %s: expected exit %s, got %s\n' "$label" "$expect" "$ec"
+}
+
+RM='{"tool_input":{"command":"rm -rf /tmp/pit-stop-wrapper"}}'
+OK='{"tool_input":{"command":"git status"}}'
+run_wrapper "sh, destructive blocked" 2 "$RM" sh "$WRAPPER" block-destructive
+run_wrapper "sh, safe passes" 0 "$OK" sh "$WRAPPER" block-destructive
+if [ -n "${BASH:-}" ]; then
+  run_wrapper "bash, destructive blocked" 2 "$RM" "$BASH" "$WRAPPER" block-destructive
+fi
+# Windows: the cmd half finds bash itself and propagates its exit code.
+if [ -n "${WINDIR:-}" ] && command -v cygpath >/dev/null 2>&1; then
+  WCMD=$(cygpath -w "$WRAPPER")
+  run_wrapper "cmd, destructive blocked" 2 "$RM" cmd //c "$WCMD" block-destructive
+  run_wrapper "cmd, safe passes" 0 "$OK" cmd //c "$WCMD" block-destructive
+fi
 
 echo
 echo "cases run: $run, failures: $fail"

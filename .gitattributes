@@ -1,3 +1,6 @@
 # Hook/test scripts must stay LF on every OS: CRLF line endings put \r inside
 # bash case patterns and awk programs, silently breaking the guardrail.
 *.sh text eol=lf
+*.cmd text eol=lf
+# Extensionless hook scripts carry the rule in their own name.
+hooks/block-destructive text eol=lf

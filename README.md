@@ -78,10 +78,10 @@ Six phases, one pass, zero mid-run questions — guardrails on top, escalation e
 
 ## The guardrail
 
-The L2 hook (`hooks/block-destructive.sh`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a command it recognizes as destructive and it exits 2 with the reason:
+The L2 hook (`hooks/block-destructive`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a command it recognizes as destructive and it exits 2 with the reason:
 
 ```
-$ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive.sh
+$ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive
 BLOCKED by pit-stop: 'rm -rf ~/projects' matches file deletion (rm). Destructive ops need the human's explicit word.
 $ echo $?
 2
@@ -95,7 +95,7 @@ destructive git subcommands (`push`, `reset --hard`, `clean -f[dx]` / `--force`,
 `-d -f`, `checkout`/`restore` of a root pathspec — `.`, `././.`, `:/`, quoted or backslashed —
 `checkout <ref> -- .`, `checkout -f`, `git rm`).
 Pattern matching is a tripwire, not a sandbox — `sh -c 'rm …'`-style vectors stay
-with the L1 ban and the L3 sweep. The 129-case matrix lives in
+with the L1 ban and the L3 sweep. The 129-case matrix plus the wrapper cases live in
 `hooks/test-block-destructive.sh`.
 
 <details>
@@ -106,7 +106,7 @@ with the L1 ban and the L3 sweep. The 129-case matrix lives in
 {
   "hooks": {
     "PreToolUse": [
-      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/hooks/block-destructive.sh\"" }] }
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR/hooks/run-hook.cmd\" block-destructive" }] } // 10s timeout
     ]
   }
 }
@@ -152,7 +152,7 @@ No per-repo setup for the skill itself. The hook is the one optional extra
 |---|---|
 | Run | Six phases, one pass: load → find → propose → fix → ideas → report (verification is a hard gate, not a phase). Zero mid-run questions |
 | Findings | Every one with `path:line` evidence, a tag, and a strength — Speculative items are reported, never built |
-| Fix loop | Review→fix with an independent reviewer, max 3 rounds, cross-round ledger, stagnation escalates to human |
+| Fix loop | Review→fix with an independent reviewer, max 3 rounds, cross-round ledger on disk (`.pit-stop/run.md`) — a resumed run reads it instead of restarting, stagnation escalates to human |
 | Ideas | Phase 5, read-only: ≤3 anchored `[idea]` candidates from this run's ledger/diff, each with a kill-probe — never built in the run that raises them |
 | Verification | No verification run in the turn = no success claim. Reports carry tool output, not adjectives |
 | Cost | Phases report spend; one phase past $20 stops itself |
@@ -166,9 +166,10 @@ No per-repo setup for the skill itself. The hook is the one optional extra
 ```
 skills/pit-stop/SKILL.md          # the skill (<500-word core)
 skills/pit-stop/references/       # per-phase rules (audit/fix/review/report/ideas) + guardrails, verification
-skills/pit-stop/templates/        # report template
-hooks/block-destructive.sh        # L2 guardrail (Claude-family hooks)
-hooks/test-block-destructive.sh   # 129-case guardrail matrix (CI on 3 OS)
+skills/pit-stop/templates/        # report template + run ledger template
+hooks/block-destructive         # L2 guardrail (Claude-family hooks)
+hooks/run-hook.cmd              # cross-platform launcher (finds bash, propagates exit code)
+hooks/test-block-destructive.sh # 129-case + wrapper guardrail matrix (CI on 3 OS)
 hooks/check-consistency.sh        # six-phase / [idea] / manifest-version / adapter-registration / sudo gate (CI)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/

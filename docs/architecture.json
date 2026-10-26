@@ -34,7 +34,7 @@
     { "id": "fix", "type": "backend", "label": "Fix", "sublabel": "fix-review loop", "pos": [690, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/review.md", "label": "review loop, max 3 rounds" }] },
     { "id": "ideas", "type": "backend", "label": "Ideas", "sublabel": "read-only brainstorm", "pos": [850, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/ideas.md", "label": "phase 5 contract" }] },
     { "id": "report", "type": "backend", "label": "Report", "sublabel": "verified-gated", "pos": [1010, 320], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/templates/report.md", "label": "report template" }] },
-    { "id": "hook", "type": "security", "label": "Hook Guard", "sublabel": "dangerous commands", "pos": [690, 120], "size": [120, 60], "sources": [{ "path": "hooks/block-destructive.sh", "label": "L2 guardrail" }] },
+    { "id": "hook", "type": "security", "label": "Hook Guard", "sublabel": "dangerous commands", "pos": [690, 120], "size": [120, 60], "sources": [{ "path": "hooks/block-destructive", "label": "L2 guardrail" }] },
     { "id": "escalate", "type": "security", "label": "Human Needed", "sublabel": "stop and write up", "pos": [690, 520], "size": [120, 60], "sources": [{ "path": "skills/pit-stop/references/guardrails.md", "label": "escalation + L1/L3" }] }
   ],
   "boundaries": [
