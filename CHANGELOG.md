@@ -7,7 +7,8 @@ itself and propagates the hook's exit code — the old `bash .../block-destructi
 could silently do nothing, and the hook lost its extension so the host stops prepending `bash`.
 The round counter and both ledgers moved to `<target>/.pit-stop/run.md`: a compaction can no
 longer hand a run free rounds or repeat a fix, and a resumed run reads the disk instead of
-restarting. Consistency check 9 pins the ledger contract.
+restarting. Consistency check 9 pins the ledger contract. The run-loop diagrams were repinned
+to the current revision, so they no longer link the removed `block-destructive.sh` path.
 Full notes: `docs/release-notes/v0.4.0.md` ([中文](docs/release-notes/v0.4.0-zh-CN.md))
 
 ## v0.3.2
