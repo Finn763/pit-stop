@@ -36,6 +36,9 @@
   stays in scope, so a reviewer that declined it made an error the run corrects.
 - Stop conditions: tests red and unfixable in-round · forbidden-zone touch · phase spend > $20 ·
   two stagnant rounds. All → "needs human", keep moving to Ideas.
+- A round is stagnant when it closes with the same open Strong set as the round before and no
+  `ATTEMPT` line explains the block; two in a row is the escalation above. A round that fixes an
+  item or uncovers a new one is progress, not stagnation.
 - Two-axis recheck after a fix round: repo-style axis (does the diff follow the codebase's
   existing conventions?) and proposal axis (does it do what this round's proposal said?).
   Orphan cleanup that `fix.md` obliges is in scope by definition — never flag it as an

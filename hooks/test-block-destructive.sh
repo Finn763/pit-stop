@@ -47,7 +47,7 @@ fi
 json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 
 # expect<TAB>command — block = hook must exit 2, pass = must exit 0.
-# The four "pass (residual)" cases are by design: pattern matching is a
+# The five "pass (residual)" cases are by design: pattern matching is a
 # tripwire, not a sandbox — these stay L1/L3 territory (see references/guardrails.md).
 cases() { cat <<'EOF'
 block	rm -rf ./build
@@ -61,6 +61,14 @@ block	xargs -I {} rm
 block	time -p rm x
 block	command rm x
 block	do rm x
+block	exec rm -rf x
+block	exec env rm -rf x
+block	! rm -rf x
+block	{ rm -rf x; }
+block	timeout 5 rm -rf x
+block	timeout -s KILL 5 rm -rf x
+block	setsid rm -rf x
+block	busybox rm -rf x
 block	echo a && rm -rf x
 block	echo a; rm -rf x
 block	echo a | rm x
@@ -71,6 +79,9 @@ block	time rm -rf x
 block	ls | xargs rm
 block	find . -exec rm -rf {} +
 block	find . -execdir rm -rf {} +
+block	find . -exec /bin/rm {} +
+block	find . -exec ./rm {} +
+block	find . -exec env rm {} +
 block	find . -name "*.tmp" -delete
 block	echo "a" && rm -rf ./build
 block	git push origin main
@@ -85,6 +96,7 @@ block	git clean -xdf
 block	git clean --force
 block	git clean -d -f
 block	git branch -D feat
+block	git branch -fD feat
 block	git branch -d -f feat
 block	git branch --delete --force feat
 block	git branch --force --delete feat
@@ -117,6 +129,9 @@ block	git restore ':/'
 block	git restore .
 block	git restore --source HEAD .
 block	git restore :/
+block	git checkout -- '*'
+block	git checkout -- *
+block	git restore -- "*"
 block	git rm file.txt
 block	git rm -r --cached x
 block	echo ok && git push
@@ -143,10 +158,16 @@ pass	git checkout main
 pass	git checkout 'main'
 pass	git checkout -b feat
 pass	git checkout -- .env
+pass	git checkout -- '*.md'
 pass	git clean -n -d
 pass	git branch -d feat
 pass	git restore src/x.ts
 pass	git status
+pass	timeout 5 git status
+pass	find . -name rm
+pass	echo "exec rm"
+pass	echo ! rm
+pass	git commit -m "find -exec /bin/rm"
 pass	git config --global push.autoSetupRemote true
 pass	echo hello
 pass	printf "rm -rf ./build"
@@ -224,6 +245,10 @@ for mode in jq no-jq; do
   echo "=== mode: $mode ==="
   if [ "$mode" = jq ] && ! command -v jq >/dev/null 2>&1; then
     echo "  skipped: jq not installed on this machine"
+    if [ "${REQUIRE_JQ:-0}" = 1 ]; then
+      echo "  FAIL: jq mode required but jq is missing" >&2
+      fail=$((fail + 1))
+    fi
     continue
   fi
   if [ "$mode" = jq ]; then HPATH="$STAGED_JQ"; else HPATH="$STAGED"; fi

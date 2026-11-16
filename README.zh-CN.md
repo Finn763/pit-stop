@@ -26,11 +26,14 @@
 读、修、验、报，一句话，不用下车。
 
 Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——装载→找缺点→给建议→改→想点子→汇报，
-中途不问你。**
+装载前最多问一次。**
 
 ```
-用 pit-stop 改进 <项目路径>
+用 pit-stop 改进 <项目路径> [--禁区 <路径或事项>...] [--max-rounds N]
 ```
+
+`--禁区` 可重复；`--max-rounds` 限制修复轮数（默认 3）。没给禁区是常态，L1 照常生效；
+只有连目标都没有才退化为只读诊断。
 
 你只说一句。agent 装载上下文，找缺点（每条带 `路径:行号` 证据），
 修→复查循环里改完，用真实工具输出验证，最后一次性给报告
@@ -65,7 +68,7 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 1. **装载** — 读项目自己的说明 + `git status` + 最近提交热区，先写一行 MODE：什么算发现、什么直接拒。
 2. **找缺点** — 先定范围再扫；每条发现带 `路径:行号` 证据、tag 和强度。
 3. **给建议** — 只列 Strong 项：现象、证据、影响、最小修复、成本——另附"不做"清单。
-4. **改** — 独立 reviewer 复查→再修的循环，最多 3 轮；不收敛升级给你。
+4. **改** — 修→复查循环，大 diff 派独立 reviewer（小 diff 自查），最多 3 轮；不收敛升级给你。
 5. **想点子** — 循环收口后只读头脑风暴：最多 3 条有锚点的 `[idea]` 候选，各带 kill-probe，本轮绝不实施。
 6. **汇报** — 改了/验过（工具输出）/没验/剩下（idea 跟在 needs-human 项之后）；本轮没跑验证命令就不许说成功。
 
@@ -73,7 +76,7 @@ Pit-stop 是一个跨端 agent skill：**一句话跑完整个改进闭环——
 
 ## 护栏
 
-L2 hook（`hooks/block-destructive`）跑在 Claude 系宿主里，fail-closed——解析不出的命令一律拦。喂它一条它认得出的破坏性命令，exit 2 并给出原因：
+L2 hook（`hooks/block-destructive`）可跑在 Claude 系宿主里（装法见下），fail-closed——解析不出的命令一律拦。喂它一条它认得出的破坏性命令，exit 2 并给出原因：
 
 ```
 $ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive
@@ -83,12 +86,13 @@ $ echo $?
 ```
 
 安全命令原样放行（`grep`、`man rm`、`git commit -m "... rm ..."`）。
-覆盖命令位 `rm`（含 `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm` 变体、
-`sudo -u root rm` 这类带 flag 值、路径式 `/bin/rm`、多行命令后续行）、`find -exec rm`/`-delete`、
+覆盖命令位 `rm`（含 `sudo`/`do`/`command`/`env`/`exec`/`nohup`/`time`/`timeout`/`setsid`/
+`busybox`/`xargs`/`\rm` 变体、`!`/`{` 命令位、`sudo -u root rm` 这类带 flag 值、路径式
+`/bin/rm`、多行命令后续行）、`find -exec rm`/`-exec /bin/rm`/`-exec env rm`/`-delete`、
 非 git VCS 强推、破坏性 git 子命令（`push`、`reset --hard`、`clean -f[dx]`/`--force`、`branch -D`/
-`-d -f`、`checkout`/`restore` 根 pathspec——`.`、`././.`、`:/`，带引号或反斜杠也算、
+`-d -f`/`-fD`、`checkout`/`restore` 根 pathspec——`.`、`././.`、`:/`、`*`，带引号或反斜杠也算、
 `checkout <ref> -- .`、`checkout -f`、`git rm`）。模式匹配是绊线不是沙箱——`sh -c 'rm …'` 这类向量留给
-L1 禁令和 L3 终扫。129 例核心矩阵加 wrapper 用例在 `hooks/test-block-destructive.sh`。
+L1 禁令。150 例核心矩阵加 wrapper 用例在 `hooks/test-block-destructive.sh`。
 
 <details>
 <summary><strong>安装（Claude Code——一个文件）</strong></summary>
@@ -125,11 +129,11 @@ npx skills add Finn763/pit-stop
 | 端 | 装法 |
 |---|---|
 | Claude Code | `/plugin marketplace add Finn763/pit-stop`，再 `/plugin install pit-stop@pit-stop` |
-| Codex | `.codex-plugin` 插件，或上面 `npx skills` |
+| Codex | `.codex-plugin/` 兼容清单（本仓无 marketplace 目录）：拷 `skills/pit-stop` 或走上面 `npx skills` |
 | Cursor | `.cursor/rules/` 规则（自动加载）；`.cursor-plugin/` 为 Cursor Plugins 格式清单 |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
 | Pi | `pi install npm:@finn763/pit-stop`（或拷 `skills/`） |
-| OpenCode | `.opencode/command/` 命令入口；技能放项目内 `.opencode/skills/pit-stop/SKILL.md`，或按末行拷到 `~/.agents/skills/pit-stop/` |
+| OpenCode | `.opencode/command/` 命令入口；把 `skills/pit-stop` 拷到 `<项目>/.opencode/skills/pit-stop/`（或 `~/.agents/skills/pit-stop/`） |
 | Hermes | `.hermes-plugin` 插件，或拷 `skills/` |
 | Devin | `.devin-plugin/` 插件清单（见仓库）；兜底走下面最后一行 |
 | Kimi | `.kimi-plugin/` 插件清单（见仓库）；兜底走下面最后一行 |
@@ -144,9 +148,9 @@ npx skills add Finn763/pit-stop
 
 | 领域 | 钉死的内容 |
 |---|---|
-| 运行 | 六阶段一遍过：装载 → 找 → 给建议 → 改 → 想点子 → 汇报（验证是硬门，不算阶段）。中途零提问 |
+| 运行 | 六阶段一遍过：装载 → 找 → 给建议 → 改 → 想点子 → 汇报（验证是硬门，不算阶段）。装载前最多一问，之后零打扰 |
 | 发现 | 每条带 `路径:行号` 证据、tag 和强度——Speculative 只报不修 |
-| 修复环 | 独立 reviewer 复查→再修，最多 3 轮，跨轮台账落盘（`.pit-stop/run.md`）——续跑读它而不是重来，不收敛升级给人 |
+| 修复环 | 修→复查，大 diff 派独立 reviewer（小 diff 自查），最多 3 轮，跨轮台账落盘（`.pit-stop/run.md`）——续跑读它而不是重来，不收敛升级给人 |
 | 想点子 | 阶段 5 只读：≤3 条锚定本轮 ledger/diff 的 `[idea]` 候选，各带 kill-probe——本轮绝不实施 |
 | 验证 | 本轮没跑验证命令就不许说成功。报告只放工具输出 |
 | 花费 | 每阶段报花费，单阶段超 $20 自己停手 |
@@ -163,7 +167,7 @@ skills/pit-stop/references/       # 阶段规则（audit/fix/review/report/ideas
 skills/pit-stop/templates/        # 报告模板 + 运行台账模板
 hooks/block-destructive           # L2 护栏（Claude 系 hooks）
 hooks/run-hook.cmd                # 跨平台启动器（cmd 自己找 bash，透传 exit code）
-hooks/test-block-destructive.sh   # 129 例 + wrapper 护栏矩阵（CI 三 OS）
+hooks/test-block-destructive.sh   # 150 例 + wrapper 护栏矩阵（CI 三 OS）
 hooks/check-consistency.sh        # 六阶段/[idea] 格式/manifest 版本/适配器注册/sudo 门（CI）
 commands/ .opencode/              # slash 命令入口
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/

@@ -26,15 +26,17 @@ Ship `hooks/block-destructive` as PreToolUse on Bash, launched through
 (`bash bash ...`), and because `bash` off `PATH` must not fail silently.
 Blocks, at command position only — mentions in messages, arguments, and quoted
 strings pass:
-- `rm` with an optional privilege-raising prefix (`do` / `command` / `env` / `nohup` /
-  `time` / `xargs`, plus the run-as-another-user wrapper the test matrix covers — flags on all
-  but `do` and `command`, and the wrapper / `env` / `xargs` swallow one flag value, so a prefixed
-  `-u root rm` counts), an optional path (`/bin/rm`) or leading
-  `\`, at start or after `&&`/`;`/`|`/`(` — including on a later line of a multi-line command.
-- `find -exec rm` / `-execdir rm`, `find -delete` (prefixed/path-qualified `find`).
-- git subcommands: `push`, `reset --hard`, `clean -f[dx]` / `--force`, `branch -D` or
+- `rm` with optional prefixes (`do` / `command` / `env` / `exec` / `nohup` / `time` /
+  `timeout` / `setsid` / `busybox` / `xargs`, plus the run-as-another-user wrapper the
+  test matrix covers — flags on all but `do` and `command`, and the wrapper / `env` / `xargs` /
+  `exec` swallow one flag value, so a prefixed `-u root rm` counts), an optional path
+  (`/bin/rm`) or leading `\`, at start or after `&&`/`;`/`|`/`(`/`!`/`{` — including on a later
+  line of a multi-line command.
+- `find -exec rm` / `-exec /bin/rm` / `-exec env rm` / `-execdir rm`, `find -delete`
+  (prefixed/path-qualified `find`).
+- git subcommands: `push`, `reset --hard`, `clean -f[dx]` / `--force`, `branch -D` / `-fD` or
   `-d`/`--delete` with `-f`/`--force` in either order, `checkout`/`restore` of a root pathspec
-  (`.` / `././.` / `:/`, the dot quoted with `"` or `'` or backslashed), `checkout -f[flags]` /
+  (`.` / `././.` / `:/` / `*`, quoted with `"` or `'` or backslashed), `checkout -f[flags]` /
   `--force`, `git rm`. Interleaved flags (`-q`, `--`, `<ref>`) are tolerated, so `checkout HEAD -- .`
   hits while a plain `checkout <branch>`, `clean -n`, `branch -d <name>` stay pass;
   plus non-git VCS force push (`hg push --force`) and the fork bomb.
@@ -44,25 +46,26 @@ structurally malformed input (string-aware brace imbalance, non-`}` tail) → fa
 — a guardrail that silently passes is no guardrail. The awk path is not a full JSON parser:
 duplicate keys resolve first-wins where jq takes the last. Dependency: bash + awk only.
 Documented residuals — pattern matching is a tripwire, not a sandbox; these stay
-L1/L3 territory: `sh -c 'rm …'` / `bash -c '…'` wrappers, `eval`/backticks, `python -c`,
+L1 territory: `sh -c 'rm …'` / `bash -c '…'` wrappers, `eval`/backticks, `python -c`,
 `env FOO=x rm`, a value-taking git option before the subcommand (`git -C <dir> push`,
 `git -c k=v checkout .`, `git --git-dir <d> checkout .`), tokens between a prefix and `rm` that the pattern
-does not consume (`<prefix> nice rm`, `command -p rm`), a single-line `if …; then rm …` body,
+does not consume (`<prefix> nice rm`, `command -p rm`), a shell-mangled command word (`r""m`,
+`r\m`, `"rm"`), a single-line `if …; then rm …` body,
 redirection truncation, a multi-line string whose later line starts with a destructive op,
 short flags that fuse a trigger pair (`git branch -fd <name>`).
 A shell comment after a safe command can read as a match (`git checkout main # -- .` blocks) —
 accepted, fail-closed noise.
-Test matrix: `hooks/test-block-destructive.sh` (129 cases in jq/no-jq extraction modes
+Test matrix: `hooks/test-block-destructive.sh` (150 cases in jq/no-jq extraction modes
 plus the wrapper cases, CI on three OS).
 Blocked call: exit 2 with the reason on stderr — the harness prevents the tool from running.
 
-## L3 — Pre-push sweep (machine)
+## L3 — Pre-push sweep (agent-run command)
 
 Before any commit/push, scan the diff for `sk-|sk-ant-|api_key=|gho_|ghp_|github_pat_|glpat-|AKIA|<private-key header>|<intranet-IP>|<absolute
 home paths>`. Zero hits or no push. Evidence-hygiene twin: reports and pasted logs carry
 only what convinces — redact the rest by habit, verify by sweep.
 
-## L3b — Red-to-green sweep (machine)
+## L3b — Red-to-green sweep (agent-run command)
 
 A green run is evidence only if the tests still assert. Before claiming `Tests pass` or
 `Linter clean`, scan the **new lines of your own diff** in the target repo for

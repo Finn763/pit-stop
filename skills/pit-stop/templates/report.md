@@ -1,6 +1,8 @@
 # pit-stop report
 
-> Generated fully automatically by pit-stop. Unverified section needs human eyes.
+> Generated fully automatically by pit-stop
+
+The Unverified section needs human eyes.
 
 ## Changed
 

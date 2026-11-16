@@ -1,6 +1,6 @@
 ---
 name: pit-stop
-description: "Use when the user asks to fully improve, overhaul, audit-and-fix, clean up tech debt, or run pit-stop on a project, repo, or codebase. Triggers: 'improve this project', 'overhaul the repo', 'audit and fix everything', 'tech debt cleanup', 'pit-stop', '全面改进', '项目体检', '进站', '重构整个项目'. Do NOT use for reviewing a single PR or diff, or for read-only questions about a codebase."
+description: "Use when the user asks to fully improve, overhaul, audit-and-fix, refactor, clean up tech debt, or run pit-stop on a project, repo, or codebase. Triggers: 'improve this project', 'overhaul the repo', 'audit and fix everything', 'refactor the project', 'tech debt cleanup', 'guardrail audit', 'pit-stop', '全面改进', '项目体检', '进站', '重构整个项目'. Do NOT use for reviewing a single PR or diff, or for read-only questions about a codebase."
 argument-hint: "<项目路径> [--禁区 <路径或事项>...] [--max-rounds N]"
 allowed-tools: Read Edit Write Bash Glob Grep Task WebFetch WebSearch
 ---
@@ -23,10 +23,10 @@ you return once with a report.
    Nothing found: name the search surface first, then `Lean already. Ship.` — never pad.
 3. **Propose**: Strong items only. Each = symptom + evidence + impact + minimal fix + cost.
    Plus a NOT-doing list with its trigger conditions.
-4. **Fix**: review→fix loop with an independent reviewer (different angle beats same eyes);
-   stop at clean or `--max-rounds` (default 3). Cross-round ledger on disk
+4. **Fix**: fix → review → fix… with a fresh reviewer for large diffs (small diffs may
+   self-check); stop at clean or `--max-rounds` (default 3). Cross-round ledger on disk
    (`.pit-stop/run.md`), no repeat fixes — a resumed run reads it instead of restarting.
-   Two stagnant rounds → escalate to "needs human", stop. See `references/review.md`.
+   Two stagnant rounds → escalate to "needs human"; continue to Ideas and Report. See `references/review.md`.
 5. **Ideas**: after the loop closes, read-only brainstorm — no edits, no subagent.
    ≤3 candidates, each anchored in this run's ledger/diff, shaped
    `[idea] <capability ≤20 words> — <path:line> — probe: <≤12 words>`.
@@ -42,7 +42,7 @@ you return once with a report.
 - **A subagent's "done" is not done.** Read its diff before reporting.
 - **Fuzzy spots downgrade, never guess.** Write "needs human", keep moving.
 - **Push/commit never automatic.** Changes wait in the workdir for one explicit word.
-- **Single spend fuse**: one phase estimated over $20 → stop phase, write report.
+- **Spend**: each phase reports cumulative estimated spend; one phase estimated over $20 → stop phase, write report.
 
 Details: `references/audit.md`, `references/fix.md`, `references/review.md`,
 `references/report.md`, `references/ideas.md`, `references/guardrails.md`,

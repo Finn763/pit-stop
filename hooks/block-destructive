@@ -5,7 +5,7 @@
 # Blocked tool exits 2 with a refusal note.
 # Pure bash + awk (POSIX, no jq/grep dependency). Fails closed: a command that
 # cannot be extracted is blocked rather than silently passed.
-# Test matrix (129 core cases x 2 extraction modes, plus wrapper cases):
+# Test matrix (150 core cases x 2 extraction modes, plus wrapper cases):
 # hooks/test-block-destructive.sh
 INPUT=$(cat)
 
@@ -115,14 +115,16 @@ case "$CMD" in
   *":(){ :|:& };:"*) BLOCKED="destructive command" ;;
 esac
 
-# rm in command position: start of command or after &&/;/|/(, with an optional
-# prefix (do / command / env / nohup / time / xargs / sudo — flags allowed on all
-# but `do` and `command`; value-taking ones may consume a flag value like `-u root`), an
-# optional path (`/bin/rm`) or leading backslash, then `rm`. Mentions in
-# arguments (grep rm, man rm, commit messages, quoted strings) pass.
+# rm in command position: start of command or after &&/;/|/(, with optional
+# prefixes (do / command / env / exec / nohup / time / timeout / setsid / busybox /
+# xargs / sudo — flags allowed on all but `do`, `command`, `!` and `{`; value-taking
+# ones may consume a flag value like `-u root`), command-position `!`/`{`, an
+# optional path (`/bin/rm`) or leading backslash, then `rm`. Mentions in arguments
+# (grep rm, man rm, commit messages, quoted strings) pass.
 RM_FLAG='[[:space:]]+-[^ ]+([[:space:]]+[^ -][^ ]*)?'
-RM_PREFIX="(sudo(${RM_FLAG})*|do|command|env(${RM_FLAG})*|nohup([[:space:]]+-[^ ]+)*|xargs(${RM_FLAG})*|time([[:space:]]+-[^ ]+)*)"
-RM_RE="(^|[;&|(])([[:space:]]*${RM_PREFIX})?[[:space:]]*([[:graph:]]*/)?[\\]?rm([[:space:]]|$)"
+RM_BOUNDARY='(^|[;&|(])'
+RM_PREFIX="(sudo(${RM_FLAG})*|do|command|env(${RM_FLAG})*|exec(${RM_FLAG})*|nohup([[:space:]]+-[^ ]+)*|xargs(${RM_FLAG})*|time([[:space:]]+-[^ ]+)*|timeout(${RM_FLAG})*[[:space:]]+[0-9][^ ;&|]*|setsid|busybox|!|[{])"
+RM_RE="${RM_BOUNDARY}([[:space:]]*${RM_PREFIX}[[:space:]]+)*[[:space:]]*([[:graph:]]*/)?[\\]?rm([[:space:]]|$)"
 if [[ "$CMD" =~ $RM_RE ]]; then
   BLOCKED="file deletion (rm)"
 fi
@@ -133,11 +135,11 @@ fi
 # shell separators (`;&|`) so mentions and `cmd && echo ...` do not false-trigger:
 #   reset ... --hard · clean ... (-f cluster | --force) · branch -D / (-d|--delete
 #   with -f|--force, either order) · checkout/restore ... [--] <root pathspec>
-#   (`.` / `././.` / dot quoted with `"` or `'`, or backslashed / `:/`) · checkout ... (-f cluster)
+#   (`.` / `././.` / dot quoted with `"` or `'`, or backslashed / `:/` / `*`) · checkout ... (-f cluster)
 #   | --force). A plain `checkout <branch>`, `git clean -n`, `git branch -d
 #   <name>` stay pass.
-GIT_SUBS='(push|reset([[:space:]]+[^ ;&|]+)*[[:space:]]+--hard|clean([[:space:]]+[^ ;&|]+)*[[:space:]]+(--force|-[[:alpha:]]*f[[:alpha:]]*)|branch([[:space:]]+[^ ;&|]+)*[[:space:]]+(-D|(-[[:alpha:]]*d[[:alpha:]]*|--delete)([[:space:]]+[^ ;&|]+)*[[:space:]]+(-f|--force)|(-f|--force)([[:space:]]+[^ ;&|]+)*[[:space:]]+(-[[:alpha:]]*d[[:alpha:]]*|--delete))|checkout([[:space:]]+[^ ;&|]+)*[[:space:]]+(--[[:space:]]+)?([\\"'\'']*\.(/\.)*/*[\\"'\'']*|[\\"'\'']*:/[\\"'\'']*)|checkout([[:space:]]+[^ ;&|]+)*[[:space:]]+(--force|-[[:alpha:]]*f[[:alpha:]]*)|restore([[:space:]]+[^ ;&|]+)*[[:space:]]+(--[[:space:]]+)?([\\"'\'']*\.(/\.)*/*[\\"'\'']*|[\\"'\'']*:/[\\"'\'']*)|rm)'
-GIT_RE="(^|[;&|(])[[:space:]]*(${RM_PREFIX}[[:space:]]+)?([[:graph:]]*/)?[\\]?git([[:space:]]+-[^ ]+)*[[:space:]]+${GIT_SUBS}([[:space:]]|$)"
+GIT_SUBS='(push|reset([[:space:]]+[^ ;&|]+)*[[:space:]]+--hard|clean([[:space:]]+[^ ;&|]+)*[[:space:]]+(--force|-[[:alpha:]]*f[[:alpha:]]*)|branch([[:space:]]+[^ ;&|]+)*[[:space:]]+(-[[:alpha:]]*D[[:alpha:]]*|(-[[:alpha:]]*d[[:alpha:]]*|--delete)([[:space:]]+[^ ;&|]+)*[[:space:]]+(-f|--force)|(-f|--force)([[:space:]]+[^ ;&|]+)*[[:space:]]+(-[[:alpha:]]*d[[:alpha:]]*|--delete))|checkout([[:space:]]+[^ ;&|]+)*[[:space:]]+(--[[:space:]]+)?([\\"'\'']*\.(/\.)*/*[\\"'\'']*|[\\"'\'']*:/[\\"'\'']*|[\\"'\'']*\*[\\"'\'']*)|checkout([[:space:]]+[^ ;&|]+)*[[:space:]]+(--force|-[[:alpha:]]*f[[:alpha:]]*)|restore([[:space:]]+[^ ;&|]+)*[[:space:]]+(--[[:space:]]+)?([\\"'\'']*\.(/\.)*/*[\\"'\'']*|[\\"'\'']*:/[\\"'\'']*|[\\"'\'']*\*[\\"'\'']*)|rm)'
+GIT_RE="${RM_BOUNDARY}[[:space:]]*(${RM_PREFIX}[[:space:]]+)*([[:graph:]]*/)?[\\]?git([[:space:]]+-[^ ]+)*[[:space:]]+${GIT_SUBS}([[:space:]]|$)"
 if [[ "$CMD" =~ $GIT_RE ]]; then
   BLOCKED="destructive git command"
 fi
@@ -145,11 +147,11 @@ fi
 # non-git VCS force push (`hg push --force`, `hg -R x push -f`) and find
 # destruction (`-delete`, `-exec[dir] rm`) — command position only, so mentions
 # in messages and quoted strings pass.
-PUSH_RE="(^|[;&|(])[[:space:]]*(${RM_PREFIX}[[:space:]]+)?([[:graph:]]*/)?[\\]?(hg|svn|bzr|fossil|pijul|darcs)(${RM_FLAG})*[[:space:]]+push[[:space:]]+(--force|-f)([[:space:]]|$)"
+PUSH_RE="${RM_BOUNDARY}[[:space:]]*(${RM_PREFIX}[[:space:]]+)*([[:graph:]]*/)?[\\]?(hg|svn|bzr|fossil|pijul|darcs)(${RM_FLAG})*[[:space:]]+push[[:space:]]+(--force|-f)([[:space:]]|$)"
 if [[ "$CMD" =~ $PUSH_RE ]]; then
   BLOCKED="force push"
 fi
-FIND_RE="(^|[;&|(])[[:space:]]*(${RM_PREFIX}[[:space:]]+)?([[:graph:]]*/)?[\\]?find([[:space:]]+[^ ]+)*[[:space:]]+(-delete|-exec(dir)?[[:space:]]+rm)([[:space:]]|$)"
+FIND_RE="${RM_BOUNDARY}[[:space:]]*(${RM_PREFIX}[[:space:]]+)*([[:graph:]]*/)?[\\]?find([[:space:]]+[^ ]+)*[[:space:]]+(-delete|-exec(dir)?[[:space:]]+(env([[:space:]]+-[^ ]+)*[[:space:]]+)?([[:graph:]]*/)?[\\]?rm)([[:space:]]|$)"
 if [[ "$CMD" =~ $FIND_RE ]]; then
   BLOCKED="file deletion (find)"
 fi

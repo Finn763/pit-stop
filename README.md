@@ -27,14 +27,17 @@ them end to end; architecture skills hand over a report and leave. Pit-stop stay
 in the car through the whole lap.
 
 Pit-stop is a cross-runtime agent skill: **one instruction runs a full improvement
-loop — load → find → propose → fix → ideas → report — with no mid-run questions.**
+loop — load → find → propose → fix → ideas → report — with at most one pre-flight question.**
 
 ```
-Use pit-stop on <project path>
+Use pit-stop on <project path> [--禁区 <path|item>...] [--max-rounds N]
 ```
+
+`--禁区` (repeatable) marks a forbidden zone; `--max-rounds` caps the fix loop (default 3).
+No zones is normal — L1 still applies; only a missing target degrades to read-only.
 
 You say one line. The agent loads context, finds weaknesses (every one with
-`path:line` evidence), fixes them in a review→fix loop, verifies with real tool
+`path:line` evidence), fixes them in a fix → review loop, verifies with real tool
 output, and returns once with a report split into verified / unverified /
 remaining. Push and publish never happen without your explicit word.
 
@@ -64,13 +67,13 @@ Built to fix three failure modes every agent owner has met:
 
 ![pit-stop run loop](docs/architecture.svg)
 
-Six phases, one pass, zero mid-run questions — guardrails on top, escalation exit below.
+Six phases, one pass, at most one pre-flight question — guardrails on top, escalation exit below.
 [▶ Interactive version](https://finn763.github.io/pit-stop/architecture.html)
 
 1. **Load** — read the project's own instructions, `git status`, recent-commit hot spots; write one MODE line: what counts as a finding here.
 2. **Find** — scope before scanning; every finding carries `path:line` evidence, a tag, and a strength.
 3. **Propose** — Strong items only: symptom, evidence, impact, minimal fix, cost — plus a NOT-doing list.
-4. **Fix** — review→fix loop with an independent reviewer, max 3 rounds; stagnation escalates to you.
+4. **Fix** — fix → review loop with a fresh reviewer for large diffs, max 3 rounds; stagnation escalates to you.
 5. **Ideas** — read-only brainstorm once the loop closes: up to 3 anchored `[idea]` candidates, each with a kill-probe, never built this run.
 6. **Report** — changed / verified (tool output) / unverified / remaining (the ideas ride behind needs-human items); no claim without a fresh verification run.
 
@@ -78,7 +81,7 @@ Six phases, one pass, zero mid-run questions — guardrails on top, escalation e
 
 ## The guardrail
 
-The L2 hook (`hooks/block-destructive`) runs in Claude-family harnesses and fails closed — a command it can't parse is blocked. Feed it a command it recognizes as destructive and it exits 2 with the reason:
+The L2 hook (`hooks/block-destructive`) can run in Claude-family harnesses (install below) and fails closed — a command it can't parse is blocked. Feed it a command it recognizes as destructive and it exits 2 with the reason:
 
 ```
 $ printf '{"tool_input":{"command":"rm -rf ~/projects"}}' | bash hooks/block-destructive
@@ -88,14 +91,15 @@ $ echo $?
 ```
 
 Safe commands pass through untouched (`grep`, `man rm`, `git commit -m "... rm ..."`).
-It covers `rm` in command position (incl. `sudo`/`do`/`command`/`env`/`nohup`/`time`/`xargs`/`\rm`
-variants, flag values like `sudo -u root rm`, a path-qualified `/bin/rm`, and a destructive op on a
-later line of a multi-line command), `find -exec rm`/`-delete`, non-git VCS force push, and
-destructive git subcommands (`push`, `reset --hard`, `clean -f[dx]` / `--force`, `branch -D` /
-`-d -f`, `checkout`/`restore` of a root pathspec — `.`, `././.`, `:/`, quoted or backslashed —
-`checkout <ref> -- .`, `checkout -f`, `git rm`).
+It covers `rm` in command position (incl. `sudo`/`do`/`command`/`env`/`exec`/`nohup`/`time`/
+`timeout`/`setsid`/`busybox`/`xargs`/`\rm` variants, `!`/`{` command positions, flag values like
+`sudo -u root rm`, a path-qualified `/bin/rm`, and a destructive op on a later line of a
+multi-line command), `find -exec rm`/`-exec /bin/rm`/`-exec env rm`/`-delete`, non-git VCS force
+push, and destructive git subcommands (`push`, `reset --hard`, `clean -f[dx]` / `--force`,
+`branch -D` / `-d -f` / `-fD`, `checkout`/`restore` of a root pathspec — `.`, `././.`, `:/`, `*`,
+quoted or backslashed — `checkout <ref> -- .`, `checkout -f`, `git rm`).
 Pattern matching is a tripwire, not a sandbox — `sh -c 'rm …'`-style vectors stay
-with the L1 ban and the L3 sweep. The 129-case matrix plus the wrapper cases live in
+with the L1 ban. The 150-case matrix plus the wrapper cases live in
 `hooks/test-block-destructive.sh`.
 
 <details>
@@ -134,11 +138,11 @@ Pick your agent when asked; update later with `npx skills update`. Per harness:
 | Harness | Install |
 |---|---|
 | Claude Code | `/plugin marketplace add Finn763/pit-stop`, then `/plugin install pit-stop@pit-stop` |
-| Codex | plugin from `.codex-plugin` (see repo), or `npx skills` above |
+| Codex | compatibility manifest in `.codex-plugin/` (no marketplace catalog here): copy `skills/pit-stop` or use `npx skills` above |
 | Cursor | rule from `.cursor/rules/` (auto-loaded); `.cursor-plugin/` for Cursor Plugins |
 | Gemini CLI | `gemini extensions install https://github.com/Finn763/pit-stop` |
 | Pi | `pi install npm:@finn763/pit-stop` (or copy `skills/`) |
-| OpenCode | command from `.opencode/command/`; skill discovered at `.opencode/skills/pit-stop/SKILL.md` inside the project, or one copy at `~/.agents/skills/pit-stop/` (universal row below) |
+| OpenCode | command from `.opencode/command/`; copy `skills/pit-stop` to `<project>/.opencode/skills/pit-stop/` (or `~/.agents/skills/pit-stop/`) |
 | Hermes | plugin from `.hermes-plugin`, or copy `skills/` |
 | Devin | plugin manifest in `.devin-plugin/` (see repo); universal fallback below |
 | Kimi | plugin manifest in `.kimi-plugin/` (see repo); universal fallback below |
@@ -154,9 +158,9 @@ No per-repo setup for the skill itself. The hook is the one optional extra
 
 | Area | What's pinned down |
 |---|---|
-| Run | Six phases, one pass: load → find → propose → fix → ideas → report (verification is a hard gate, not a phase). Zero mid-run questions |
+| Run | Six phases, one pass: load → find → propose → fix → ideas → report (verification is a hard gate, not a phase). At most one pre-flight question |
 | Findings | Every one with `path:line` evidence, a tag, and a strength — Speculative items are reported, never built |
-| Fix loop | Review→fix with an independent reviewer, max 3 rounds, cross-round ledger on disk (`.pit-stop/run.md`) — a resumed run reads it instead of restarting, stagnation escalates to human |
+| Fix loop | Fix → review with a fresh reviewer for large diffs (small diffs self-check), max 3 rounds, cross-round ledger on disk (`.pit-stop/run.md`) — a resumed run reads it instead of restarting, stagnation escalates to human |
 | Ideas | Phase 5, read-only: ≤3 anchored `[idea]` candidates from this run's ledger/diff, each with a kill-probe — never built in the run that raises them |
 | Verification | No verification run in the turn = no success claim. Reports carry tool output, not adjectives |
 | Cost | Phases report spend; one phase past $20 stops itself |
@@ -173,7 +177,7 @@ skills/pit-stop/references/       # per-phase rules (audit/fix/review/report/ide
 skills/pit-stop/templates/        # report template + run ledger template
 hooks/block-destructive           # L2 guardrail (Claude-family hooks)
 hooks/run-hook.cmd                # cross-platform launcher (finds bash, propagates exit code)
-hooks/test-block-destructive.sh   # 129-case + wrapper guardrail matrix (CI on 3 OS)
+hooks/test-block-destructive.sh   # 150-case + wrapper guardrail matrix (CI on 3 OS)
 hooks/check-consistency.sh        # six-phase / [idea] / manifest-version / adapter-registration / sudo gate (CI)
 commands/ .opencode/              # slash-command entries
 .claude-plugin/ .codex-plugin/ .cursor-plugin/ .devin-plugin/

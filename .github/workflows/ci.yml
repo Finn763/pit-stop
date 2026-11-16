@@ -28,8 +28,8 @@ jobs:
               Windows) choco install -y jq ;;
             esac || echo "jq install failed on $RUNNER_OS; no-jq mode still runs"
           fi
-      - name: Run guardrail test matrix (134 cases x jq/no-jq modes)
-        run: bash hooks/test-block-destructive.sh
+      - name: Run guardrail test matrix (150 cases + wrapper runs)
+        run: REQUIRE_JQ=1 bash hooks/test-block-destructive.sh
       - name: Doc and adapter consistency gate
         run: bash hooks/check-consistency.sh
 

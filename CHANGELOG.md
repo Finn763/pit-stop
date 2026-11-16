@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Unreleased
+
+Guardrail hardening: quoted/glob root pathspecs (`git checkout -- '*'`), `exec`/`!`/`{` command
+positions, path-qualified and `env`-wrapped `find -exec`, `timeout`/`setsid`/`busybox` prefixes,
+and fused `branch -fD`. The matrix grows 129→150 cases; CI requires the jq extraction mode
+instead of skipping it silently. The default run no longer degrades to read-only when no
+forbidden zone is supplied, the run ledger is corroborated before resume, and the credential
+sweep is labelled agent-run rather than host-enforced.
+
 ## v0.4.0
 
 The L2 guardrail is launched through `hooks/run-hook.cmd`, a polyglot that finds bash on Windows

@@ -10,7 +10,7 @@ MAX_ROUNDS: <N, from --max-rounds or 3>
 
 ## Findings ledger
 
-- LEDGER open | <path:line> | <tag> | <Strong|Worth> | <one-line symptom> | round <N>
+- LEDGER open | <path:line> | <tag> | <Strong|Worth exploring> | <one-line symptom> | round <N>
 - LEDGER fixed | <path:line> | <one line: what landed>
 - LEDGER skip | <path:line> | <one-line reason it is not fixed>
 - LEDGER speculative | <path:line> | <one line — report only, never fixed>

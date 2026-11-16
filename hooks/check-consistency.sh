@@ -145,7 +145,7 @@ for mf in $known; do
   fi
 done
 # A new adapter manifest must join the list above instead of being silently skipped.
-for extra in .*-plugin/plugin.json *-extension.json; do
+for extra in .*-plugin/plugin.json .*-plugin/plugin.yaml *-extension.json; do
   [ -f "$extra" ] || continue
   if [[ " $known " != *" $extra "* ]]; then bad "unlisted adapter manifest: $extra (add it to check 6)"; fi
 done
@@ -181,6 +181,10 @@ GEMINI.md|Strong/Worth/Speculative|STRENGTH
 .cursor/rules/pit-stop.mdc|Strong/Worth/Speculative|STRENGTH
 .windsurf/rules/pit-stop.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
 .windsurf/rules/pit-stop.md|Strong/Worth/Speculative|STRENGTH
+commands/pit-stop.toml|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+commands/pit-stop.toml|Strong/Worth exploring/Speculative|STRENGTH
+.opencode/command/pit-stop.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
+.opencode/command/pit-stop.md|Strong/Worth exploring/Speculative|STRENGTH
 README.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
 README.zh-CN.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
 docs/SPEC.md|delete/stdlib/native/yagni/shrink/perf/security/obs|TAG
@@ -220,6 +224,7 @@ skills/pit-stop/SKILL.md|.pit-stop/run.md
 skills/pit-stop/references/fix.md|.pit-stop/run.md
 skills/pit-stop/references/fix.md|templates/run.md
 skills/pit-stop/references/fix.md|.pit-stop/.gitignore
+skills/pit-stop/references/fix.md|git cat-file -e
 PAIRS
 
 echo "=== 10. dogfood hook command resolves ==="
@@ -233,6 +238,8 @@ elif has "$cfg" "block-destructive.sh"; then
   bad "$cfg names a .sh path (host prepends bash; go through run-hook.cmd)"
 elif ! has "$cfg" "hooks/run-hook.cmd"; then
   bad "$cfg: hook command does not go through hooks/run-hook.cmd"
+elif ! has "$cfg" '"matcher": "Bash"'; then
+  bad "$cfg: PreToolUse matcher is not Bash"
 elif ! has "$cfg" "block-destructive"; then
   bad "$cfg: hook command does not name hooks/block-destructive"
 elif [ ! -f hooks/run-hook.cmd ]; then

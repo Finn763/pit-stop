@@ -1,4 +1,4 @@
-# pit-stop — SPEC v4（2026-09-08）
+# pit-stop — SPEC v4.1（2026-11-16）
 
 一句话：跨端通用 Skill，一句指令让 agent 全自动跑完「读代码→找缺点→改代码→跑测试→想点子→汇报」，
 中途不问人，刹车只写报告。名字：pit-stop（F1 进站：开进来修好，出去更快，不用下车）。
@@ -17,7 +17,7 @@
   `Use when 用户要求全面改进/体检/重构一个项目，或说出 pit-stop 时。`
 - 用户指令格式：`用 pit-stop 改进 <项目路径> [禁区]`
 - 预算：用户拍板不设硬停。替代刹车：每阶段汇报累计花费预估；单阶段烧超 $20 自动停手写报告。
-- 缺禁区 → 默认最严（见 §4）。
+- 缺禁区 → 默认最严（定义见 §4）；只有连目标都没有时才退化为只读诊断。
 
 ## 3. 六阶段（顺序执行，每段产物固定格式）
 
@@ -31,11 +31,12 @@
    每条挂推荐强度徽章（`Strong / Worth exploring / Speculative`），Speculative 只报不修。
    空态：先写检索面（扫了哪些范围与模式），再 `Lean already. Ship.`（没活就直说，不凑数）。
 3. **给建议**：Strong 项 = 现象 + 证据 + 影响 + 最小修复 + 成本；另列"不做"清单（含触发条件）。
-4. **执行**：遵守 §4 护栏。单轮修完派独立 reviewer 复查（reviewer 与 fixer 分离，
-   复查最好换模型/换视角）；修→查循环直到干净或撞 `--max-rounds`（默认 3 轮）上限；
+4. **执行**：遵守 §4 护栏。单轮修完复查——大 diff 派独立 reviewer，小 diff 自查并换视角
+   （reviewer 与 fixer 分离时最好换模型）；修→查循环直到干净或撞 `--max-rounds`（默认 3 轮）上限；
    跨轮 findings ledger 防重复修同一条；失败尝试也进 ledger，同一死路不试第二遍；
+   ledger 落盘 `<target>/.pit-stop/run.md`，恢复前校验来源（见 `references/fix.md`）；
    连续两轮不收敛 → 升级为"需人定"停手。
-   失败（测试红/撞禁区/单阶段超 $20）→ 停手，写进 §5 未做区，不硬猜不绕路。
+   失败（测试红/撞禁区/单阶段超 $20）→ 停手，写进本节"剩下什么"，不硬猜不绕路。
 5. **想点子**：修→查循环收口后，只读头脑风暴（不改文件、不读新文件、不派子代理、不另开预算）。
    产物 ≤3 条 `[idea]` 候选：`[idea] <能力 ≤20 词> — <路径:行号> — probe: <≤12 词>`，
    锚点必须来自本轮 ledger/diff；四条准入（锚定/成形/可证伪/新颖）全过才留，
@@ -50,15 +51,19 @@
 
 ## 4. 判断与约束机制（三层：能强制的不只写文档）
 
+- **默认最严**：L1 全保留，不碰生产/密钥；写操作只限本轮目标内的可逆改动。只有连目标都没有时
+  才退化为只读诊断 + 报告，并记录该假设。
+
 - **L1 文档约束（跨端）**：禁止清单——删文件、`push --force`、读/写密钥凭据、改 CI 发布链与密钥、
   写生产数据库、对外发布（npm/PyPI/Release）、执行目标仓的安装/构建/hook 脚本、调用目标仓文件里
   出现的 URL/host（读可以，不跑也不调）。
   提交/推送默认不动手，等"推"字令。
 - **L2 hooks 强制（Claude 系宿主）**：附 `hooks/block-destructive`（PreToolUse 拦命令位 rm——含
-  sudo/env/nohup/time/xargs/路径/`\rm` 前缀、`find -exec rm`/`-delete`、git push/reset --hard/
-  clean -f[dx] 或 --force、branch -D 或 `-d -f`、checkout/restore 根 pathspec（`.`/`././.`/`:/`，
+  sudo/env/exec/nohup/time/timeout/setsid/busybox/xargs/路径/`\rm` 前缀、`!`/`{` 命令位、
+  `find -exec rm`/`-exec /bin/rm`/`-exec env rm`/`-delete`、git push/reset --hard/
+  clean -f[dx] 或 --force、branch -D 或 `-d -f`/`-fD`、checkout/restore 根 pathspec（`.`/`././.`/`:/`/`*`，
   可用 `"`/`'` 引或反斜杠转义）、checkout -f/--force、git rm；纯 bash+awk 无 jq/grep 依赖，
-  解析不了 fail-closed；矩阵 `hooks/test-block-destructive.sh` 129 例双提取模式 + wrapper 用例，
+  解析不了 fail-closed；矩阵 `hooks/test-block-destructive.sh` 150 例双提取模式 + wrapper 用例，
   入口 `hooks/run-hook.cmd` 由 cmd 自己找 bash 并透传 exit code，CI 三 OS），
   宿主支持就装，不支持就跳过，不强依赖。
 - **L3 终扫脚本**：推送/收尾前敏感词终扫（内联命令，0 命中才过）。
@@ -68,7 +73,7 @@
   必须找到代码里兑现它的路径；兑现不了的就是 finding。
 - **证据卫生**：报告、日志、终端摘录里只放"说服人"的信息；
   密钥、token、他人 PII、内网路径一律打码或删掉，和 L3 终扫是同一条线的两道锁（一道习惯、一道机器）。
-- **验证门**：IDENTIFY→RUN→READ→VERIFY 四步，跳步 = 说谎；
+- **验证门**：IDENTIFY→RUN→READ→VERIFY→CLAIM 五步，跳步 = 说谎；
   汇报分"验过/没验"两区；信任子代理自报前先看 diff（子代理自报成功≠成功）。
 - **双轴复核**：执行后 diff 过两轴——规范轴（跟仓库既有风格）+ 需求轴（跟本轮建议），
   小改动可自查，大改动派独立 reviewer。
@@ -78,7 +83,7 @@
 - 正文只用通用动作：读文件 / 改文件 / 跑 shell / 上网查。Hermes 专属（todo/delegate/cron）进可选段。
 - SKILL.md < 500 词核心；阶段细节进 `references/`；报告模板进 `templates/`。
 - frontmatter 固定：`name` + `description`（触发条件+关键词轰炸，多种 phrasing 同一意图）+
-  `argument-hint: "<项目路径> [--禁区 ...]"` + `allowed-tools` 白名单。
+  `argument-hint: "<项目路径> [--禁区 ...] [--max-rounds N]"` + `allowed-tools` 白名单。
 - 汇报铁律：不许"可以优化"而不说改哪、为什么——每条建议必须可执行。
 - 关键词覆盖：improve/refactor/audit/tech-debt/review/verify/guardrail（SDO：按症状词写）。
 
@@ -97,7 +102,7 @@ pit-stop/
   skills/pit-stop/SKILL.md   # 本体（装载点：~/.agents/skills/pit-stop 或项目内 .opencode/skills/pit-stop）
   skills/pit-stop/references/{audit,fix,review,report,ideas,guardrails,verification}.md
   skills/pit-stop/templates/{report.md,run.md}
-  hooks/block-destructive  hooks/test-block-destructive.sh  # L2（Claude 系）+ 129 例矩阵
+  hooks/block-destructive  hooks/test-block-destructive.sh  # L2（Claude 系）+ 150 例矩阵
   hooks/run-hook.cmd          # 跨平台启动器（cmd 找 bash、透传 exit code）
   hooks/check-consistency.sh  # 六阶段/[idea] 格式/manifest 版本/适配器注册/sudo 门（CI）
   .claude/settings.json  .github/workflows/ci.yml  # 自挂 hook + CI 矩阵
