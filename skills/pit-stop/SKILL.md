@@ -1,7 +1,7 @@
 ---
 name: pit-stop
 description: "Use when the user asks to fully improve, overhaul, audit-and-fix, refactor, clean up tech debt, or run pit-stop on a project, repo, or codebase. Triggers: 'improve this project', 'overhaul the repo', 'audit and fix everything', 'refactor the project', 'tech debt cleanup', 'guardrail audit', 'pit-stop', '全面改进', '项目体检', '进站', '重构整个项目'. Do NOT use for reviewing a single PR or diff, or for read-only questions about a codebase."
-argument-hint: "<项目路径> [--禁区 <路径或事项>...] [--max-rounds N]"
+argument-hint: "<project path> [--forbidden <path|item>...] [--max-rounds N]"
 allowed-tools: Read Edit Write Bash Glob Grep Task WebFetch WebSearch
 ---
 

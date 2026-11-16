@@ -2,7 +2,7 @@
 description: Run a full pit-stop on a project
 ---
 
-Run the pit-stop skill on `$ARGUMENTS` (project path; optional `--禁区` forbidden
+Run the pit-stop skill on `$ARGUMENTS` (project path; optional `--forbidden <path|item>`
 zones; optional `--max-rounds N`). Six phases in order — load, find, propose, fix,
 ideas, report — under the skill's guardrails. Findings carry `path:line` evidence,
 a tag (`delete/stdlib/native/yagni/shrink/perf/security/obs`), and a strength

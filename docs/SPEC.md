@@ -15,7 +15,7 @@
 
 - Skill 名：`pit-stop`；description 只写触发条件，不写流程（SDO 铁律，写了流程 agent 会照描述偷工）：
   `Use when 用户要求全面改进/体检/重构一个项目，或说出 pit-stop 时。`
-- 用户指令格式：`用 pit-stop 改进 <项目路径> [禁区]`
+- 用户指令格式：`用 pit-stop 改进 <项目路径> [--forbidden <路径或事项>]`
 - 预算：用户拍板不设硬停。替代刹车：每阶段汇报累计花费预估；单阶段烧超 $20 自动停手写报告。
 - 缺禁区 → 默认最严（定义见 §4）；只有连目标都没有时才退化为只读诊断。
 
@@ -83,7 +83,7 @@
 - 正文只用通用动作：读文件 / 改文件 / 跑 shell / 上网查。Hermes 专属（todo/delegate/cron）进可选段。
 - SKILL.md < 500 词核心；阶段细节进 `references/`；报告模板进 `templates/`。
 - frontmatter 固定：`name` + `description`（触发条件+关键词轰炸，多种 phrasing 同一意图）+
-  `argument-hint: "<项目路径> [--禁区 ...] [--max-rounds N]"` + `allowed-tools` 白名单。
+  `argument-hint: "<project path> [--forbidden <path|item>...] [--max-rounds N]"` + `allowed-tools` 白名单。
 - 汇报铁律：不许"可以优化"而不说改哪、为什么——每条建议必须可执行。
 - 关键词覆盖：improve/refactor/audit/tech-debt/review/verify/guardrail（SDO：按症状词写）。
 

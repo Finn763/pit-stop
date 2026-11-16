@@ -30,10 +30,10 @@ Pit-stop is a cross-runtime agent skill: **one instruction runs a full improveme
 loop — load → find → propose → fix → ideas → report — with at most one pre-flight question.**
 
 ```
-Use pit-stop on <project path> [--禁区 <path|item>...] [--max-rounds N]
+Use pit-stop on <project path> [--forbidden <path|item>...] [--max-rounds N]
 ```
 
-`--禁区` (repeatable) marks a forbidden zone; `--max-rounds` caps the fix loop (default 3).
+`--forbidden` (repeatable) marks a forbidden zone; `--max-rounds` caps the fix loop (default 3).
 No zones is normal — L1 still applies; only a missing target degrades to read-only.
 
 You say one line. The agent loads context, finds weaknesses (every one with
